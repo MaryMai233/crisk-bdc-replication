@@ -1,0 +1,8 @@
+{
+  "title": "Climate Risk and Business Development Companies: Replication Archive",
+  "upload_type": "software",
+  "creators": [{"name": "Mai, Yirui"}],
+  "version": "2.3.0",
+  "license": "MIT",
+  "description": "Public code, paper, tables, figures, and audits for the CRISK-BDC replication and extension."
+}

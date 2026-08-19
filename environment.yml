@@ -1,0 +1,11 @@
+name: crisk-bdc
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - numpy
+  - pandas
+  - scipy
+  - statsmodels
+  - matplotlib
+  - openpyxl
