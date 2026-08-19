@@ -42,7 +42,7 @@ def row(cells, widths, *, bold=False, top=False, bottom=False, mid=False, align=
 
 def write_table(path: Path, title: str, note: str, sections):
     body = [r"{\rtf1\ansi\deff0{\fonttbl{\f0 Times New Roman;}}\fs22\paperw12240\paperh15840\margl900\margr900\margt900\margb900"]
-    body += [r"\pard\sa40\b\fs24 " + esc(title) + r"\b0\par", r"\pard\sa140\fs20 " + esc(note) + r"\par"]
+    body += [r"\pard\sa100\b\fs24 " + esc(title) + r"\b0\par"]
     for section in sections:
         body.append(r"\pard\sa40\b " + esc(section["label"]) + r"\b0\par")
         rows = section["rows"]
@@ -64,9 +64,21 @@ def main():
     peaks = pd.read_csv(DATA / "bank_beta_peak_timing.csv", parse_dates=["peak_date"])
     bdc_paired = pd.read_csv(DATA / "bdc_beta_2019_2020_paired_test.csv").iloc[0]
 
+    def stars(p_value):
+        if p_value < 0.01:
+            return "***"
+        if p_value < 0.05:
+            return "**"
+        if p_value < 0.10:
+            return "*"
+        return ""
+
     section_a = [
         ["", "Annual beta", "Daily beta", "Signed CRISK", "Positive CRISK"],
-        ["2020 increase", *[f"{tests.loc[x, 'estimate']:.3f}" for x in ["T1", "T3", "T4", "T5"]]],
+        ["2020 increase", *[
+            f"{tests.loc[x, 'estimate']:.3f}{stars(tests.loc[x, 'p_value_two_sided'])}"
+            for x in ["T1", "T3", "T4", "T5"]
+        ]],
         ["", *[f"({tests.loc[x, 'std_error']:.3f})" for x in ["T1", "T3", "T4", "T5"]]],
         ["Two-sided p-value", f"{tests.loc['T1','p_value_two_sided']:.4f}", f"{tests.loc['T3','p_value_two_sided']:.4f}", "<0.0001", "<0.0001"],
         ["Estimator", "Paired t", "HAC(203)", "HAC(203)", "HAC(203)"],
@@ -94,32 +106,33 @@ def main():
         f"{top4_detail.mcrisk_usd_bn.sum():.1f}", f"{top4_detail.mean_identity_error_usd_bn.abs().max():.2e}",
     ])
     section_d = [
-        ["Sample", "Mean beta 2019", "Mean beta 2020", "Mean change", "Positive changes"],
+        ["Sample", "Mean beta 2019", "Mean beta 2020", "Mean change (SE)", "Paired p", "Positive changes"],
         [
             "20 BDCs", f"{bdc_paired.mean_beta_2019:.3f}", f"{bdc_paired.mean_beta_2020:.3f}",
-            f"{bdc_paired.mean_change:.3f}", f"{int(bdc_paired.positive_changes)}/{int(bdc_paired.observations)}",
+            f"{bdc_paired.mean_change:.3f} ({bdc_paired.mean_change_std_error:.3f})",
+            f"{bdc_paired.paired_t_p_two_sided:.2e}",
+            f"{int(bdc_paired.positive_changes)}/{int(bdc_paired.observations)}",
         ],
         [
             "19-BDC H2 subsample", f"{bdc_paired.h2_subsample_mean_beta_2019:.3f}",
             f"{bdc_paired.h2_subsample_mean_beta_2020:.3f}",
-            f"{bdc_paired.h2_subsample_mean_change:.3f}",
+            f"{bdc_paired.h2_subsample_mean_change:.3f} ({bdc_paired.h2_mean_change_se:.3f})",
+            f"{bdc_paired.h2_paired_t_p_two_sided:.2e}",
             f"{int(bdc_paired.h2_subsample_positive_changes)}/{int(bdc_paired.h2_subsample_observations)}",
         ],
     ]
     note = (
-        "The table evaluates the bank replication through 2020. Daily diagnostics use HAC(203), matching the estimated DCC half-life; lag sensitivity at 21, 63, 126, and 203 days is archived. "
-        "Because all institutions load on one common factor over the same window, conventional p-values summarize cross-institution consistency rather than independent event replications, and no significance stars are reported. "
-        "Panel A's signed CRISK estimate is the difference between daily calendar-year means; Panel B's benchmark-aligned increase instead combines December-average beta with year-end debt and market equity. "
-        "The raw daily peak follows the 9 November 2020 Pfizer vaccine announcement and is treated as a vaccine/value-rotation event, not as the March oil-price collapse. The slightly higher 2021 annual mean is interpreted in light of median DCC persistence of 0.9966. "
-        "Panel C applies mCRISK = 0.92 x E x LRMES each day and then averages the daily products over 127 trading days; mean beta is reported for reference and is not an input to the columns at right. "
+        "Daily diagnostics use HAC(203); lag sensitivity is archived. Because institutions share one factor realization, paired p-values measure cross-institution consistency rather than independent event replications. "
+        "Panel A's signed CRISK is the difference between calendar-year daily means; Panel B's benchmark-aligned increase uses December-average beta with year-end debt and equity. The raw daily peak follows the 9 November 2020 Pfizer announcement, not the March oil-price break. "
+        "Panel C applies mCRISK = 0.92 x E x LRMES daily and then averages the products; mean beta is reported only for reference. "
         f"The replicated-to-published mCRISK ratio of {decomposition.mcrisk_ratio_replicated_to_published:.3f} equals an equity-scale ratio of {decomposition.equity_scale_ratio:.3f} times a climate-loss-rate ratio of {decomposition.loss_rate_ratio:.3f}. "
-        "The published article text rounds the CRISK increase to approximately USD 425 billion; its Table 2 sums to USD 430.89 billion. Conventional p-values are two-sided and descriptive."
+        "The published text rounds the increase to USD 425 billion; its Table 2 sums to USD 430.89 billion. P-values are two-sided. ***, **, and * denote p<0.01, p<0.05, and p<0.10."
     )
     write_table(RESULTS / "Table_1_Bank_CRISK_Replication.rtf", "Table 1: Bank Replication of the 2020 Climate-Risk Shock.", note, [
         {"label": "Panel A: Statistical validation", "rows": section_a, "widths": [2600, 1700, 1700, 1700, 1700]},
         {"label": "Panel B: Published-magnitude comparison", "rows": section_b, "widths": [3600, 1450, 1450, 1450, 1450]},
         {"label": "Panel C: End-2020 top-four 127-day mean construction", "rows": section_c, "widths": [2300, 1600, 2300, 2000, 1800]},
-        {"label": "Panel D: BDC time-series validation", "rows": section_d, "widths": [2500, 1900, 1900, 1800, 2200]},
+        {"label": "Panel D: BDC time-series validation", "rows": section_d, "widths": [2300, 1500, 1500, 2100, 1300, 1700]},
     ])
 
     plt.rcParams.update({"font.family": "serif", "font.serif": ["Nimbus Roman", "Times New Roman", "DejaVu Serif"], "font.size": 11, "axes.spines.top": False, "axes.spines.right": False})

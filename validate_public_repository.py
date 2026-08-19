@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import py_compile
+import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
@@ -19,6 +20,11 @@ for module in MODULES:
             raise AssertionError(f"Restricted data included: {path.relative_to(ROOT)}")
 assert not list(ROOT.rglob("__pycache__"))
 assert not list(ROOT.glob("**/Results/*.xlsx"))
-for source in ROOT.rglob("*.py"):
-    py_compile.compile(source, doraise=True)
+with tempfile.TemporaryDirectory(prefix="crisk_public_compile_") as cache_dir:
+    cache_root = Path(cache_dir)
+    for source in ROOT.rglob("*.py"):
+        relative = source.relative_to(ROOT)
+        compiled = cache_root / relative.with_suffix(".pyc")
+        compiled.parent.mkdir(parents=True, exist_ok=True)
+        py_compile.compile(source, cfile=str(compiled), doraise=True)
 print("PASS: public repository structure, source compilation, and data-license guard")

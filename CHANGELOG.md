@@ -1,5 +1,14 @@
 # Changelog
 
+## v2.4.0 — 2026-08-19
+
+- Reorganized the paper around three empirical findings rather than three hypotheses and reduced the draft to 18 pages.
+- Restored the conventional H1 paired statistics and significance markers while retaining the common-shock interpretation caveat.
+- Added paired statistics for both the 20-BDC validation sample and the 19-BDC exposure subsample.
+- Moved the underpowered BDC exposure-regression grid to the appendix and retained the MDE diagnosis in the main text.
+- Combined overlapping stress-test tables and removed three redundant figures.
+- Added a machine-readable audit showing that the March 17 raw cross-bank beta and the WFC 127-day maximum are distinct calculations whose close values are coincidental.
+
 ## v2.3.0 — 2026-08-19
 
 - Recast H1 paired statistics as cross-institution consistency under one common shock.

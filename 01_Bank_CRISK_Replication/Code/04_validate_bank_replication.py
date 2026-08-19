@@ -370,11 +370,16 @@ def main() -> None:
     bdc_ttest = stats.ttest_rel(bdc_annual[2020], bdc_annual[2019])
     bdc_wilcoxon = stats.wilcoxon(bdc_annual[2020], bdc_annual[2019])
     bdc_h2 = bdc_annual.drop(index="BBDC", errors="ignore")
+    bdc_h2_ttest = stats.ttest_rel(bdc_h2[2020], bdc_h2[2019])
+    bdc_h2_wilcoxon = stats.wilcoxon(bdc_h2[2020], bdc_h2[2019])
+    bdc_change_values = bdc_annual[2020] - bdc_annual[2019]
+    bdc_h2_change_values = bdc_h2[2020] - bdc_h2[2019]
     bdc_paired = pd.DataFrame([{
         "observations": len(bdc_annual),
         "mean_beta_2019": bdc_annual[2019].mean(),
         "mean_beta_2020": bdc_annual[2020].mean(),
         "mean_change": (bdc_annual[2020] - bdc_annual[2019]).mean(),
+        "mean_change_std_error": bdc_change_values.std(ddof=1) / math.sqrt(len(bdc_change_values)),
         "positive_changes": int((bdc_annual[2020] > bdc_annual[2019]).sum()),
         "paired_t_stat": float(bdc_ttest.statistic),
         "paired_t_p_two_sided": float(bdc_ttest.pvalue),
@@ -384,7 +389,12 @@ def main() -> None:
         "h2_subsample_mean_beta_2019": bdc_h2[2019].mean(),
         "h2_subsample_mean_beta_2020": bdc_h2[2020].mean(),
         "h2_subsample_mean_change": (bdc_h2[2020] - bdc_h2[2019]).mean(),
+        "h2_mean_change_se": bdc_h2_change_values.std(ddof=1) / math.sqrt(len(bdc_h2_change_values)),
         "h2_subsample_positive_changes": int((bdc_h2[2020] > bdc_h2[2019]).sum()),
+        "h2_paired_t_stat": float(bdc_h2_ttest.statistic),
+        "h2_paired_t_p_two_sided": float(bdc_h2_ttest.pvalue),
+        "h2_wilcoxon_stat": float(bdc_h2_wilcoxon.statistic),
+        "h2_wilcoxon_p_two_sided": float(bdc_h2_wilcoxon.pvalue),
     }])
     bdc_paired.to_csv(TABLE_DIR / "bdc_beta_2019_2020_paired_test.csv", index=False)
     write_dta(bdc_paired, TABLE_DIR / "bdc_beta_2019_2020_paired_test.dta")
@@ -509,6 +519,25 @@ def main() -> None:
     event_diagnostics = pd.DataFrame(event_rows)
     event_diagnostics.to_csv(TABLE_DIR / "bank_beta_event_diagnostics.csv", index=False)
     write_dta(event_diagnostics, TABLE_DIR / "bank_beta_event_diagnostics.dta")
+
+    # Audit a rare numerical coincidence highlighted during review.  These two
+    # values come from different slices and different transformations: the
+    # first is the raw cross-bank mean on 17 March 2020; the second is WFC's
+    # trailing-127-day beta on 31 December 2020.
+    march17_raw_mean = float(indexed_daily.loc[pd.Timestamp("2020-03-17"), "beta_raw_mean"])
+    wfc_end2020 = end2020.loc[end2020["current_ticker"].eq("WFC")].iloc[0]
+    numeric_disambiguation = pd.DataFrame([{
+        "quantity_a": "Cross-bank raw daily mean climate beta",
+        "date_a": pd.Timestamp("2020-03-17"),
+        "value_a": march17_raw_mean,
+        "quantity_b": "WFC trailing-127-day climate beta",
+        "date_b": pd.Timestamp(wfc_end2020["date"]),
+        "value_b": float(wfc_end2020["beta_climate_ma127"]),
+        "absolute_difference": abs(march17_raw_mean - float(wfc_end2020["beta_climate_ma127"])),
+        "same_source_slice": False,
+    }])
+    numeric_disambiguation.to_csv(TABLE_DIR / "bank_beta_numeric_disambiguation.csv", index=False)
+    write_dta(numeric_disambiguation, TABLE_DIR / "bank_beta_numeric_disambiguation.dta")
 
     comparison = pd.DataFrame([
         {"criterion_id": "D1", "dimension": "Direction", "metric": "All-ten annual mean climate beta",
