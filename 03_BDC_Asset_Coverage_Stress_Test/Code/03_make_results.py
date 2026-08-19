@@ -44,26 +44,6 @@ def main():
     panel = pd.read_csv(DATA / "h3_analysis_panel.csv")
     placebo = pd.read_csv(DATA / "h3_market_placebo_and_nav_sensitivity.csv")
     linkage = pd.read_csv(DATA / "h2_h3_linkage_summary.csv")
-    headers = ["", "(1)", "(2)", "(3)", "(4)", "(5)"]
-    rows = [
-        headers,
-        ["Mean buffer compression (pp)", *[f"{x:.3f}" for x in robust.mean_buffer_shrink_pp]],
-        ["Median buffer compression (pp)", *[f"{x:.3f}" for x in robust.median_buffer_shrink_pp]],
-        ["LRMES measure", "Monthly mean 50%", "Empirical p01", "Month-end 50%", "Beta-implied 50%", "Positive-loss 50%"],
-        ["Positive compression share", *[f"{x:.3f}" for x in robust.positive_shrink_share]],
-        ["Within 10 pp after stress", *[str(int(x)) for x in robust.within_10pp_after]],
-        ["Within 25 pp after stress", *[str(int(x)) for x in robust.within_25pp_after]],
-        ["Legal breaches after stress", *[str(int(x)) for x in robust.breach_observations_after]],
-        ["Observations", *[str(int(x)) for x in robust.observations]],
-        ["BDC clusters", *[str(int(x)) for x in robust.firms]],
-    ]
-    note = "This table reports calibrated reductions in the distance between each BDC's reported asset-coverage ratio and its applicable 150% or 200% statutory threshold. Column (1) uses the maintained 50% six-month climate-factor decline; Column (2) uses the sample's 34.1% empirical first-percentile decline. Because positive beta mechanically implies positive compression, the table emphasizes magnitudes and threshold proximity rather than significance stars."
-    body = [r"{\rtf1\ansi\deff0{\fonttbl{\f0 Times New Roman;}}\fs20\landscape\paperw15840\paperh12240\margl700\margr700\margt750\margb750", r"\pard\sa40\b\fs24 Table 5: Climate Stress and BDC Asset-Coverage Capacity.\b0\par", r"\pard\sa110\fs18 " + esc(note) + r"\par"]
-    for i, cells in enumerate(rows):
-        body.append(rtf_row(cells, [3300] + [1800] * 5, bold=i == 0, top=i == 0, mid=i == 0, bottom=i == len(rows) - 1))
-    body += [r"\pard\sa120\fs18 " + esc("Notes: " + note) + r"\par", "}"]
-    (RESULTS / "Table_5_BDC_Asset_Coverage_Stress.rtf").write_text("\n".join(body), encoding="ascii", errors="ignore")
-
     order = [
         "Climate shock, market equity mapping",
         "Empirical climate 1pct tail (34.1pct decline)",
@@ -72,37 +52,58 @@ def main():
         "Climate shock, NAV mapping",
     ]
     placebo = placebo.set_index("scenario").loc[order].reset_index()
-    compare_rows = [
+    panel_a = [
         ["", "Climate 50%", "Climate p01", "Market p01", "Market 50%", "Climate / NAV"],
         ["Mean buffer compression (pp)", *[f"{x:.3f}" for x in placebo.mean_buffer_shrink_pp]],
         ["Median buffer compression (pp)", *[f"{x:.3f}" for x in placebo.median_buffer_shrink_pp]],
-        ["Mean of firm-level buffer shares (%)", *[f"{x:.2f}" for x in placebo.mean_buffer_consumed_pct]],
-        ["Ratio of mean compression to mean buffer (%)", *[f"{x:.2f}" for x in placebo.ratio_of_mean_compression_to_mean_buffer_pct]],
+        ["Mean compression / mean buffer (%)", *[f"{x:.2f}" for x in placebo.ratio_of_mean_compression_to_mean_buffer_pct]],
         ["Legal breaches", *[str(int(x)) for x in placebo.breach_observations_after]],
         ["Observations", *[str(int(x)) for x in placebo.observations]],
     ]
+    indexed_robust = robust.set_index("scenario")
+    timing = indexed_robust.loc[[
+        "Primary: monthly mean DCB LRMES",
+        "Month-end DCB LRMES",
+        "Monthly beta-implied LRMES",
+        "Positive-loss-only monthly mean LRMES",
+    ]]
+    panel_b = [
+        ["", "Monthly mean", "Month-end", "Beta-implied", "Positive-loss"],
+        ["Mean buffer compression (pp)", *[f"{x:.3f}" for x in timing.mean_buffer_shrink_pp]],
+        ["Median buffer compression (pp)", *[f"{x:.3f}" for x in timing.median_buffer_shrink_pp]],
+        ["Within 10 pp after stress", *[str(int(x)) for x in timing.within_10pp_after]],
+        ["Legal breaches", *[str(int(x)) for x in timing.breach_observations_after]],
+    ]
     matched_ratio = placebo.loc[placebo.scenario.str.startswith("Empirical climate"), "mean_buffer_shrink_pp"].iloc[0] / placebo.loc[placebo.scenario.str.startswith("Empirical market"), "mean_buffer_shrink_pp"].iloc[0]
-    compare_note = "Climate p01 and Market p01 use each factor's empirical first-percentile six-month return over 2010-2025: -34.1% and -16.8%, respectively. Their mean-compression ratio is " + f"{matched_ratio:.3f}. " + "The mean of firm-level ratios is distinct from the ratio of sample means; both are reported. The NAV column replaces market equity only for the maintained 50% climate shock."
-    compare_body = [r"{\rtf1\ansi\deff0{\fonttbl{\f0 Times New Roman;}}\fs20\landscape\paperw15840\paperh12240\margl620\margr620\margt720\margb720", r"\pard\sa40\b\fs24 Table 6: Matched-Tail Market Comparison, NAV Sensitivity, and the H2-H3 Link.\b0\par", r"\pard\sa110\fs18 " + esc(compare_note) + r"\par"]
-    for i, cells in enumerate(compare_rows):
-        compare_body.append(rtf_row(cells, [3900] + [1950] * 5, bold=i == 0, top=i == 0, mid=i == 0, bottom=i == len(compare_rows) - 1))
     link = linkage.iloc[0]
-    compare_body += [r"\pard\sa120\fs18 " + esc("H2-to-H3 linkage: the H2 point estimate implies a zero-to-maximum carbon-intensive investment-share beta increment of " + f"{link.predicted_beta_increment_zero_to_max:.4f}" + " and a representative incremental buffer compression of " + f"{link.predicted_buffer_compression_zero_to_max_pp:.3f}" + " percentage points. This is a mechanical mapping of an imprecise coefficient, not a causal estimate.") + r"\par", "}"]
-    (RESULTS / "Table_6_Matched_Tail_NAV_and_H2_H3_Linkage.rtf").write_text("\n".join(compare_body), encoding="ascii", errors="ignore")
+    panel_c = [
+        ["Exposure coefficient", f"{link.h2_standardized_coefficient:.4f}"],
+        ["Predicted beta change, zero to maximum share", f"{link.predicted_beta_increment_zero_to_max:.4f}"],
+        ["Representative incremental compression", f"{link.predicted_buffer_compression_zero_to_max_pp:.3f} pp"],
+        ["Mean increment at observed exposures", f"{link.mean_incremental_compression_at_observed_exposure_pp:.3f} pp"],
+    ]
+    note = (
+        "Climate p01 and Market p01 use separate empirical first-percentile six-month returns of -34.1% and -16.8%; "
+        f"their mean-compression ratio is {matched_ratio:.3f}. Market 50% is a scale placebo and NAV replaces market equity. "
+        "Panel C is a deterministic mapping of an imprecise exposure coefficient, not a causal estimate. No stars are reported for mechanically transformed stress magnitudes."
+    )
+    body = [
+        r"{\rtf1\ansi\deff0{\fonttbl{\f0 Times New Roman;}}\fs20\landscape\paperw15840\paperh12240\margl620\margr620\margt720\margb720",
+        r"\pard\sa40\b\fs24 Table 3: Climate Stress and BDC Asset-Coverage Capacity.\b0\par",
+        r"\pard\sa30\b Panel A: Scenario comparison\b0\par",
+    ]
+    for i, cells in enumerate(panel_a):
+        body.append(rtf_row(cells, [3900] + [1950] * 5, bold=i == 0, top=i == 0, mid=i == 0, bottom=i == len(panel_a) - 1))
+    body.append(r"\pard\sa45\b Panel B: Climate 50-percent timing and loss mapping\b0\par")
+    for i, cells in enumerate(panel_b):
+        body.append(rtf_row(cells, [4300] + [2200] * 4, bold=i == 0, top=i == 0, mid=i == 0, bottom=i == len(panel_b) - 1))
+    body.append(r"\pard\sa45\b Panel C: Mechanical exposure-to-capacity link\b0\par")
+    for i, cells in enumerate(panel_c):
+        body.append(rtf_row(cells, [7000, 5000], top=i == 0, bottom=i == len(panel_c) - 1))
+    body += [r"\pard\sa100\fs18 " + esc("Notes: " + note) + r"\par", "}"]
+    (RESULTS / "Table_3_BDC_Asset_Coverage_Stress.rtf").write_text("\n".join(body), encoding="ascii", errors="ignore")
 
     plt.rcParams.update({"font.family": "serif", "font.serif": ["Nimbus Roman", "Times New Roman", "DejaVu Serif"], "font.size": 11, "axes.spines.top": False, "axes.spines.right": False})
-    fig, ax = plt.subplots(figsize=(7.4, 4.2))
-    ax.plot(years.year, years.mean_baseline_coverage_pct, color=BLUE, lw=2.3, marker="o", label="Reported coverage")
-    ax.plot(years.year, years.mean_stressed_coverage_pct, color=ORANGE, lw=2.3, marker="o", label="After climate stress")
-    ax.fill_between(years.year, years.mean_stressed_coverage_pct, years.mean_baseline_coverage_pct, color=ORANGE, alpha=.12)
-    ax.set_ylabel("Mean asset coverage (%)")
-    ax.set_xlabel("Year")
-    ax.set_xticks(years.year)
-    ax.legend(frameon=False, ncol=2)
-    fig.tight_layout()
-    fig.savefig(RESULTS / "Figure_6_Asset_Coverage_Before_After.png", dpi=300, bbox_inches="tight")
-    plt.close(fig)
-
     primary = panel[panel.actual_asset_coverage_pct.notna()].copy()
     cutoffs = np.array([5, 10, 15, 20, 25, 30])
     before = [(primary.baseline_buffer_pp <= c).sum() for c in cutoffs]

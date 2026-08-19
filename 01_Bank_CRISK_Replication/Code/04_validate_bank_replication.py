@@ -705,7 +705,6 @@ def main() -> None:
     }
     (AUDIT_DIR / "h1_decision.json").write_text(json.dumps(decision_json, indent=2), encoding="utf-8")
 
-    build_figures(monthly, change, comparison)
     audit = {
         "status": "PASS",
         "source_sha256": sha256(source_path),

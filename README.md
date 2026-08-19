@@ -6,9 +6,11 @@ Public replication code, paper, publication-style tables, figures, and audit doc
 
 ## Main findings
 
-- **Replication fidelity:** Mean climate beta rises from 0.193 in 2019 to 0.424 in 2020 for all ten benchmark banks; the paired change is 0.230 (SE 0.029). Replicated top-four marginal CRISK and signed CRISK increases recover 85.3% and 86.5% of the published magnitudes. Because all banks share one factor realization, the paired statistic measures cross-bank consistency rather than ten independent event replications.
-- **Continuation-rule shelf life:** After KOL closes, the prescribed international top-five basket tracks KOL at 0.454 daily and 0.832 weekly. Holding the basket fixed, the downstream BDC equity-beta coefficient moves from 0.025 to 0.154. The full exposure grid remains statistically underpowered: the attenuation extrapolation, 0.215, is below the pooled 80% MDE of 0.273.
-- **Capital-parameter portability:** Applying the bank capital ratio mechanically makes positive CRISK zero throughout the BDC sample. A BDC-specific 50% climate scenario instead reduces the mean statutory asset-coverage buffer by 5.85 percentage points without a primary-scenario breach; at matched empirical tail probabilities, climate compression is 0.343 of the market benchmark.
+- **Replication:** Ten-bank climate beta rises by 0.230*** in 2020; marginal and signed CRISK increases recover 85.3% and 86.5% of published magnitudes.
+- **Factor maintenance:** The post-KOL basket tracks KOL at 0.454 daily and 0.832 weekly. Its BDC exposure estimate remains below the design's detectable threshold.
+- **BDC stress:** Bank `k=8%` is vacuous for BDCs. The applicable asset-coverage mapping reduces the mean buffer by 5.85 percentage points without a primary-scenario breach.
+
+The accompanying paper is a 12-page research note. Detailed robustness tables remain in module `Results/` rather than the paper.
 
 ## Structure
 

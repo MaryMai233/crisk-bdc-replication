@@ -80,8 +80,6 @@ def main():
             for x in ["T1", "T3", "T4", "T5"]
         ]],
         ["", *[f"({tests.loc[x, 'std_error']:.3f})" for x in ["T1", "T3", "T4", "T5"]]],
-        ["Two-sided p-value", f"{tests.loc['T1','p_value_two_sided']:.4f}", f"{tests.loc['T3','p_value_two_sided']:.4f}", "<0.0001", "<0.0001"],
-        ["Estimator", "Paired t", "HAC(203)", "HAC(203)", "HAC(203)"],
         ["Observations", *[str(int(tests.loc[x, "n"])) for x in ["T1", "T3", "T4", "T5"]]],
     ]
     section_b = [
@@ -106,23 +104,23 @@ def main():
         f"{top4_detail.mcrisk_usd_bn.sum():.1f}", f"{top4_detail.mean_identity_error_usd_bn.abs().max():.2e}",
     ])
     section_d = [
-        ["Sample", "Mean beta 2019", "Mean beta 2020", "Mean change (SE)", "Paired p", "Positive changes"],
+        ["Sample", "Mean beta 2019", "Mean beta 2020", "Mean change", "Positive changes"],
         [
             "20 BDCs", f"{bdc_paired.mean_beta_2019:.3f}", f"{bdc_paired.mean_beta_2020:.3f}",
-            f"{bdc_paired.mean_change:.3f} ({bdc_paired.mean_change_std_error:.3f})",
-            f"{bdc_paired.paired_t_p_two_sided:.2e}",
+            f"{bdc_paired.mean_change:.3f}{stars(bdc_paired.paired_t_p_two_sided)}",
             f"{int(bdc_paired.positive_changes)}/{int(bdc_paired.observations)}",
         ],
+        ["", "", "", f"({bdc_paired.mean_change_std_error:.3f})", ""],
         [
             "19-BDC H2 subsample", f"{bdc_paired.h2_subsample_mean_beta_2019:.3f}",
             f"{bdc_paired.h2_subsample_mean_beta_2020:.3f}",
-            f"{bdc_paired.h2_subsample_mean_change:.3f} ({bdc_paired.h2_mean_change_se:.3f})",
-            f"{bdc_paired.h2_paired_t_p_two_sided:.2e}",
+            f"{bdc_paired.h2_subsample_mean_change:.3f}{stars(bdc_paired.h2_paired_t_p_two_sided)}",
             f"{int(bdc_paired.h2_subsample_positive_changes)}/{int(bdc_paired.h2_subsample_observations)}",
         ],
+        ["", "", "", f"({bdc_paired.h2_mean_change_se:.3f})", ""],
     ]
     note = (
-        "Daily diagnostics use HAC(203); lag sensitivity is archived. Because institutions share one factor realization, paired p-values measure cross-institution consistency rather than independent event replications. "
+        "Daily diagnostics use HAC(203); lag sensitivity is archived. Because institutions share one factor realization, paired statistics measure cross-institution consistency rather than independent event replications. "
         "Panel A's signed CRISK is the difference between calendar-year daily means; Panel B's benchmark-aligned increase uses December-average beta with year-end debt and equity. The raw daily peak follows the 9 November 2020 Pfizer announcement, not the March oil-price break. "
         "Panel C applies mCRISK = 0.92 x E x LRMES daily and then averages the products; mean beta is reported only for reference. "
         f"The replicated-to-published mCRISK ratio of {decomposition.mcrisk_ratio_replicated_to_published:.3f} equals an equity-scale ratio of {decomposition.equity_scale_ratio:.3f} times a climate-loss-rate ratio of {decomposition.loss_rate_ratio:.3f}. "
@@ -132,7 +130,7 @@ def main():
         {"label": "Panel A: Statistical validation", "rows": section_a, "widths": [2600, 1700, 1700, 1700, 1700]},
         {"label": "Panel B: Published-magnitude comparison", "rows": section_b, "widths": [3600, 1450, 1450, 1450, 1450]},
         {"label": "Panel C: End-2020 top-four 127-day mean construction", "rows": section_c, "widths": [2300, 1600, 2300, 2000, 1800]},
-        {"label": "Panel D: BDC time-series validation", "rows": section_d, "widths": [2300, 1500, 1500, 2100, 1300, 1700]},
+        {"label": "Panel D: BDC time-series validation", "rows": section_d, "widths": [2500, 1900, 1900, 1800, 2200]},
     ])
 
     plt.rcParams.update({"font.family": "serif", "font.serif": ["Nimbus Roman", "Times New Roman", "DejaVu Serif"], "font.size": 11, "axes.spines.top": False, "axes.spines.right": False})

@@ -212,27 +212,32 @@ def main() -> None:
     panel.to_csv(PROCESSED / "h2_classification_bounds_panel.csv", index=False)
     HELPER.export_dta(panel, PROCESSED / "h2_classification_bounds_panel.dta")
 
+    def starred(value: float, p_value: float) -> str:
+        mark = "***" if p_value < .01 else "**" if p_value < .05 else "*" if p_value < .10 else ""
+        return f"{value:.3f}{mark}"
+
     selected = models.set_index("model_id").loc[["R1", "R2", "R5", "R7", "R3", "R4", "R6", "R8"]]
     rows_out = [
         ["", "Lower", "Upper", "Lagged", "Post-2021", "Lower", "Upper", "Lagged", "Post-2021"],
-        ["Brown investment share", *[f"{x:.3f}" for x in selected["coefficient_exposure"]]],
+        ["Brown investment share", *[
+            starred(value, p_value)
+            for value, p_value in zip(selected["coefficient_exposure"], selected["p_two_sided"])
+        ]],
         ["", *[f"({x:.3f})" for x in selected["standard_error"]]],
-        ["Two-sided p-value", *[f"{x:.3f}" for x in selected["p_two_sided"]]],
         ["Outcome", "Equity", "Equity", "Equity", "Equity", "Asset", "Asset", "Asset", "Asset"],
         ["Observations", *[str(int(x)) for x in selected["n"]]],
     ]
     note = (
         "Lower and upper bounds treat every low-confidence or unmapped portfolio weight as, respectively, non-brown or brown. "
-        "Lagged specifications use the prior quarter's exposure. Post-2021 specifications omit 2021. All models include quarter fixed effects and cluster standard errors by BDC."
+        "Lagged specifications use the prior quarter's exposure. Post-2021 specifications omit 2021. All models include quarter fixed effects and cluster standard errors by BDC. "
+        "***, **, and * denote two-sided significance at 1%, 5%, and 10%."
     )
-    body = [r"{\rtf1\ansi\deff0{\fonttbl{\f0 Times New Roman;}}\fs20\landscape\paperw15840\paperh12240\margl600\margr600\margt800\margb800", r"\pard\sa40\b\fs24 Table 2A: Classification, Timing, and COVID-Period Robustness.\b0\par", r"\pard\sa120\fs18 " + esc(note) + r"\par"]
+    body = [r"{\rtf1\ansi\deff0{\fonttbl{\f0 Times New Roman;}}\fs20\landscape\paperw15840\paperh12240\margl600\margr600\margt800\margb800", r"\pard\sa40\b\fs24 Table 2A: Classification, Timing, and COVID-Period Robustness.\b0\par"]
     for index, cells in enumerate(rows_out):
         body.append(rtf_row(cells, [3000] + [1450] * 8, bold=index == 0, top=index == 0, bottom=index == len(rows_out) - 1))
     body += [r"\pard\sa100\fs17 " + esc("Notes: " + note) + r"\par", "}"]
     RESULTS.mkdir(parents=True, exist_ok=True)
     body[1] = r"\pard\sa40\b\fs24 Table S2: Classification, Timing, and COVID-Period Robustness.\b0\par"
-    (RESULTS / "Table_S2_H2_Inference_Robustness.rtf").write_text("\n".join(body), encoding="ascii", errors="ignore")
-
     print(models[["model_id", "coefficient_exposure", "standard_error", "p_two_sided", "n"]].to_string(index=False))
     print("\nWild-cluster bootstrap:\n", wild.to_string(index=False))
     print("\nPower diagnostics:\n", power.to_string(index=False))

@@ -1,5 +1,12 @@
 # Changelog
 
+## v2.5.0 — 2026-08-19
+
+- Reduced the paper from 18 to 12 pages by consolidating data and method, removing the in-paper robustness appendix, and retaining three nonredundant figures.
+- Standardized all regression tables to coefficient stars with standard errors in parentheses; removed separate conventional p-value rows.
+- Displayed the significant 20-BDC and 19-BDC paired changes directly in Table 1.
+- Kept the statistically underpowered exposure grid in module Results rather than allowing it to dominate the paper.
+
 ## v2.4.0 — 2026-08-19
 
 - Reorganized the paper around three empirical findings rather than three hypotheses and reduced the draft to 18 pages.

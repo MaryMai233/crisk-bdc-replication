@@ -50,7 +50,6 @@ def main():
         ["", "(1)", "(2)", "(3)", "(4)", "(5)", "(6)"],
         ["Broad carbon-intensive investment share", *coef],
         ["", *[f"({x:.3f})" for x in m.standard_error]],
-        ["Two-sided p-value", *[f"{x:.3f}" for x in m.p_two_sided]],
         ["Outcome", "Equity beta", "Asset beta", "Equity beta", "Asset beta", "Equity beta", "Asset beta"],
         ["Financial controls", "No", "No", "Yes", "Yes", "No", "No"],
         ["BDC fixed effects", "No", "No", "No", "No", "Yes", "Yes"],
@@ -58,8 +57,8 @@ def main():
         ["Observations", *[str(int(x)) for x in m.n]],
         ["R-squared", *[f"{x:.3f}" for x in m.r_squared]],
     ]
-    note = "This table estimates the association between standardized disclosed broad carbon-intensive investment shares and standardized BDC climate beta. Standard errors are clustered by BDC and appear in parentheses. Financial controls include size, leverage, ROA, book-to-market, and market beta. All p-values and significance markers use two-sided tests. ***, **, and * denote significance at the 1%, 5%, and 10% levels."
-    body = [r"{\rtf1\ansi\deff0{\fonttbl{\f0 Times New Roman;}}\fs22\landscape\paperw15840\paperh12240\margl720\margr720\margt900\margb900", r"\pard\sa40\b\fs24 Table 2: BDC Investment Exposure and Climate Beta.\b0\par", r"\pard\sa140\fs20 " + esc(note) + r"\par"]
+    note = "The table relates standardized disclosed broad carbon-intensive investment shares to standardized BDC climate beta. Standard errors are clustered by BDC and appear in parentheses. Financial controls are size, leverage, ROA, book-to-market, and market beta. ***, **, and * denote two-sided significance at 1%, 5%, and 10%."
+    body = [r"{\rtf1\ansi\deff0{\fonttbl{\f0 Times New Roman;}}\fs22\landscape\paperw15840\paperh12240\margl720\margr720\margt900\margb900", r"\pard\sa40\b\fs24 Table 2: BDC Investment Exposure and Climate Beta.\b0\par"]
     for i, cells in enumerate(rows):
         body.append(rtf_row(cells, [3200] + [1800] * 6, bold=i == 0, top=i == 0, mid=i == 0, bottom=i == len(rows) - 1))
     body += [r"\pard\sa120\fs18 " + esc("Notes: " + note) + r"\par", "}"]
@@ -77,7 +76,6 @@ def main():
             ["", "(1)", "(2)", "(3)", "(4)", "(5)", "(6)"],
             ["Broad carbon-intensive investment share", *credit_coef],
             ["", *[f"({x:.3f})" for x in credit.standard_error]],
-            ["Two-sided p-value", *[f"{x:.3f}" for x in credit.p_two_sided]],
             ["Outcome", "Equity beta", "Equity beta", "Asset beta", "Asset beta", "Equity beta", "Equity beta"],
             ["High-yield factor", "No", "Yes", "No", "Yes", "Yes", "Yes"],
             ["Financial controls", "No", "No", "No", "No", "Yes", "No"],
@@ -86,13 +84,12 @@ def main():
             ["Observations", *[str(int(x)) for x in credit.n]],
             ["R-squared", *[f"{x:.3f}" for x in credit.r_squared]],
         ]
-        credit_note = "Baseline columns reproduce the archived primary two-factor outcomes used in Table 3. Credit-adjusted columns separately re-estimate dynamic climate beta over 2010-2025 after adding a high-yield excess-return factor equal to the average of HYG and JNK total log returns less SHY. The 380 BDC-quarter regressions use the same 2021-2025 disclosure panel. Standard errors are clustered by BDC. All inference is two-sided."
-        credit_body = [r"{\rtf1\ansi\deff0{\fonttbl{\f0 Times New Roman;}}\fs22\landscape\paperw15840\paperh12240\margl720\margr720\margt900\margb900", r"\pard\sa40\b\fs24 Table 3: High-Yield Credit-Factor Robustness of BDC Climate Beta.\b0\par", r"\pard\sa140\fs20 " + esc(credit_note) + r"\par"]
+        credit_note = "Credit-adjusted columns re-estimate dynamic climate beta after adding the average HYG/JNK return less SHY. All models use the same 380 BDC-quarters and BDC-clustered standard errors. ***, **, and * denote two-sided significance at 1%, 5%, and 10%."
+        credit_body = [r"{\rtf1\ansi\deff0{\fonttbl{\f0 Times New Roman;}}\fs22\landscape\paperw15840\paperh12240\margl720\margr720\margt900\margb900", r"\pard\sa40\b\fs24 Table 3: High-Yield Credit-Factor Robustness of BDC Climate Beta.\b0\par"]
         for i, cells in enumerate(credit_rows):
             credit_body.append(rtf_row(cells, [3200] + [1800] * 6, bold=i == 0, top=i == 0, mid=i == 0, bottom=i == len(credit_rows) - 1))
         credit_body += [r"\pard\sa120\fs18 " + esc("Notes: " + credit_note) + r"\par", "}"]
         credit_body[1] = r"\pard\sa40\b\fs24 Table S1: High-Yield Credit-Factor Robustness of BDC Climate Beta.\b0\par"
-        (RESULTS / "Table_S1_Credit_Return_Robustness.rtf").write_text("\n".join(credit_body), encoding="ascii", errors="ignore")
 
     plt.rcParams.update({"font.family": "serif", "font.serif": ["Nimbus Roman", "Times New Roman", "DejaVu Serif"], "font.size": 11, "axes.spines.top": False, "axes.spines.right": False})
     x = panel["brown_share_broad_dynamic_pct"].to_numpy(float)
@@ -110,7 +107,6 @@ def main():
         ax.set_xlabel("Broad carbon-intensive investment share (%)")
     axes[0].set_ylabel("Climate beta")
     fig.tight_layout()
-    fig.savefig(RESULTS / "Figure_3_Investment_Exposure_and_Climate_Beta.png", dpi=300, bbox_inches="tight")
     plt.close(fig)
 
     panel["quarter"] = pd.PeriodIndex(panel["fiscal_quarter"], freq="Q").to_timestamp("Q") if "fiscal_quarter" in panel else pd.to_datetime(panel["datadate"])
@@ -125,7 +121,6 @@ def main():
     ax.set_xticklabels([str(year) for year in range(2021, 2026)])
     ax.legend(frameon=False, ncol=2)
     fig.tight_layout()
-    fig.savefig(RESULTS / "Figure_4_Investment_Exposure_Trends.png", dpi=300, bbox_inches="tight")
     plt.close(fig)
 
 

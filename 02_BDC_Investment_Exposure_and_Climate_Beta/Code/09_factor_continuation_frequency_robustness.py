@@ -198,14 +198,20 @@ def horizon_correlations() -> pd.DataFrame:
 
 
 def build_rtf(models: pd.DataFrame) -> None:
+    def starred(value: float, p_value: float) -> str:
+        mark = "***" if p_value < .01 else "**" if p_value < .05 else "*" if p_value < .10 else ""
+        return f"{value:.3f}{mark}"
+
     indexed = models.set_index("model_id")
     panel_a_ids = ["F1", "F2", "F3", "F4", "F5", "F6"]
     selected = indexed.loc[panel_a_ids]
     rows_a = [
         ["", "Top-five daily", "Top-five daily", "U.S. coal daily", "U.S. coal daily", "Top-five weekly", "Top-five weekly"],
-        ["Broad investment share", *[f"{x:.3f}" for x in selected["coefficient_exposure"]]],
+        ["Broad investment share", *[
+            starred(value, p_value)
+            for value, p_value in zip(selected["coefficient_exposure"], selected["p_two_sided"])
+        ]],
         ["", *[f"({x:.3f})" for x in selected["standard_error"]]],
-        ["Two-sided p-value", *[f"{x:.3f}" for x in selected["p_two_sided"]]],
         ["Outcome", "Equity", "Asset", "Equity", "Asset", "Equity", "Asset"],
         ["Frequency", "Daily", "Daily", "Daily", "Daily", "Weekly", "Weekly"],
         ["Observations", *[str(int(x)) for x in selected["n"]]],
@@ -218,40 +224,45 @@ def build_rtf(models: pd.DataFrame) -> None:
     equity_items = [main_models.loc["H2_7"], inference.loc["R1"], inference.loc["R2"], inference.loc["R5"], inference.loc["R7"]]
     asset_items = [main_models.loc["H2_8"], inference.loc["R3"], inference.loc["R4"], inference.loc["R6"], inference.loc["R8"]]
     rows_b = [
-        ["", "Narrow", "Lower", "Upper", "Lagged", "Post-2021", "Wild p", "MDE80"],
-        ["Equity beta", *[f"{x['coefficient_exposure']:.3f}" for x in equity_items], f"{wild.iloc[0]['wild_cluster_p_two_sided']:.3f}", f"{power.loc['H2_1','minimum_detectable_effect_80pct_power']:.3f}"],
-        ["", *[f"({x['standard_error']:.3f})" for x in equity_items], "", ""],
-        ["Asset beta", *[f"{x['coefficient_exposure']:.3f}" for x in asset_items], f"{wild.iloc[1]['wild_cluster_p_two_sided']:.3f}", f"{power.loc['H2_2','minimum_detectable_effect_80pct_power']:.3f}"],
-        ["", *[f"({x['standard_error']:.3f})" for x in asset_items], "", ""],
-        ["Observations", *[str(int(x['n'])) for x in equity_items], str(int(wild.iloc[0]["observations"])), "380"],
+        ["", "Narrow", "Lower", "Upper", "Lagged", "Post-2021", "MDE80"],
+        ["Equity beta", *[
+            starred(x["coefficient_exposure"], x["p_two_sided"]) for x in equity_items
+        ], f"{power.loc['H2_1','minimum_detectable_effect_80pct_power']:.3f}"],
+        ["", *[f"({x['standard_error']:.3f})" for x in equity_items], ""],
+        ["Asset beta", *[
+            starred(x["coefficient_exposure"], x["p_two_sided"]) for x in asset_items
+        ], f"{power.loc['H2_2','minimum_detectable_effect_80pct_power']:.3f}"],
+        ["", *[f"({x['standard_error']:.3f})" for x in asset_items], ""],
+        ["Observations", *[str(int(x['n'])) for x in equity_items], "380"],
     ]
 
     credit = pd.read_csv(PROCESSED / "h2_credit_return_robustness_models.csv").set_index("model_id")
     credit_items = credit.loc[["C1", "C2", "C3", "C4", "C5", "C6"]]
     rows_c = [
         ["", "Baseline equity", "HY equity", "Baseline asset", "HY asset", "HY + controls", "HY + BDC FE"],
-        ["Broad investment share", *[f"{x:.3f}" for x in credit_items["coefficient_exposure"]]],
+        ["Broad investment share", *[
+            starred(value, p_value)
+            for value, p_value in zip(credit_items["coefficient_exposure"], credit_items["p_two_sided"])
+        ]],
         ["", *[f"({x:.3f})" for x in credit_items["standard_error"]]],
-        ["Two-sided p-value", *[f"{x:.3f}" for x in credit_items["p_two_sided"]]],
         ["Observations", *[str(int(x)) for x in credit_items["n"]]],
     ]
 
     note = (
         "Panel A compares the published top-five continuation at daily frequency, the earlier U.S. coal value-weighted continuation, and a weekly DCC estimate of the published continuation. "
         "All outcomes and exposures are standardized within the corresponding 19-BDC panel; every regression includes quarter fixed effects and clusters standard errors by BDC. "
-        "Panel B reports classification, timing, wild-cluster, and power checks. Panel C reuses the archived Table 3 primary outcomes as its baseline and compares them with a separately re-estimated high-yield-return-adjusted DCC. No coefficient reaches conventional two-sided significance."
+        "Panel B reports classification, timing, and power checks. Panel C reuses the archived Table 3 outcomes and compares them with a separately re-estimated high-yield-return-adjusted DCC. Standard errors appear in parentheses; ***, **, and * denote two-sided significance at 1%, 5%, and 10%. No coefficient reaches conventional significance."
     )
     body = [
         r"{\rtf1\ansi\deff0{\fonttbl{\f0 Times New Roman;}}\fs19\landscape\paperw15840\paperh12240\margl520\margr520\margt650\margb650",
         r"\pard\sa30\b\fs23 Table 4: Factor Continuation, Frequency, and H2 Robustness.\b0\par",
-        r"\pard\sa90\fs17 " + esc(note) + r"\par",
         r"\pard\sa20\b Panel A: Factor continuation and return frequency\b0\par",
     ]
     for index, cells in enumerate(rows_a):
         body.append(rtf_row(cells, [2750] + [1750] * 6, bold=index == 0, top=index == 0, bottom=index == len(rows_a) - 1))
     body.append(r"\pard\sa45\b Panel B: Classification, timing, and inference\b0\par")
     for index, cells in enumerate(rows_b):
-        body.append(rtf_row(cells, [2450] + [1450] * 7, bold=index == 0, top=index == 0, bottom=index == len(rows_b) - 1))
+        body.append(rtf_row(cells, [2450] + [1700] * 6, bold=index == 0, top=index == 0, bottom=index == len(rows_b) - 1))
     body.append(r"\pard\sa45\b Panel C: High-yield credit-return factor\b0\par")
     for index, cells in enumerate(rows_c):
         body.append(rtf_row(cells, [2750] + [1750] * 6, bold=index == 0, top=index == 0, bottom=index == len(rows_c) - 1))

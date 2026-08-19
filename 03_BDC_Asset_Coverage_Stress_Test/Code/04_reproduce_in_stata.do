@@ -20,7 +20,7 @@ reg buffer_shrink_pp, vce(cluster bdc_id)
 estimates store h3_primary
 
 esttab h3_primary using ///
-    "`root'/Results/Table_5_Stata_Reproduction.rtf", replace rtf ///
+    "`root'/Results/Table_3_Stata_Reproduction.rtf", replace rtf ///
     keep(_cons) b(3) se(3) nostar label compress ///
     coeflabels(_cons "Coverage-buffer compression (pp)") ///
     stats(N, fmt(0) labels("Observations")) ///
@@ -28,4 +28,4 @@ esttab h3_primary using ///
     addnotes("Standard errors are clustered by BDC and appear in parentheses for reproducibility." ///
              "The manuscript treats this as a calibration because the positive sign is partly mechanical and first-stage DCC uncertainty is not propagated.")
 
-display as text "Stata table written to Results/Table_5_Stata_Reproduction.rtf"
+display as text "Stata table written to Results/Table_3_Stata_Reproduction.rtf"
