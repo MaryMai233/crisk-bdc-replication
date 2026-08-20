@@ -107,6 +107,7 @@ def main():
         ax.set_xlabel("Broad carbon-intensive investment share (%)")
     axes[0].set_ylabel("Climate beta")
     fig.tight_layout()
+    fig.savefig(RESULTS / "Figure_3_Investment_Exposure_and_Climate_Beta.png", dpi=300, bbox_inches="tight")
     plt.close(fig)
 
     panel["quarter"] = pd.PeriodIndex(panel["fiscal_quarter"], freq="Q").to_timestamp("Q") if "fiscal_quarter" in panel else pd.to_datetime(panel["datadate"])
@@ -121,6 +122,7 @@ def main():
     ax.set_xticklabels([str(year) for year in range(2021, 2026)])
     ax.legend(frameon=False, ncol=2)
     fig.tight_layout()
+    fig.savefig(RESULTS / "Figure_4_Investment_Exposure_Trends.png", dpi=300, bbox_inches="tight")
     plt.close(fig)
 
 

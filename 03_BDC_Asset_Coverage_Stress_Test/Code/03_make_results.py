@@ -104,6 +104,18 @@ def main():
     (RESULTS / "Table_3_BDC_Asset_Coverage_Stress.rtf").write_text("\n".join(body), encoding="ascii", errors="ignore")
 
     plt.rcParams.update({"font.family": "serif", "font.serif": ["Nimbus Roman", "Times New Roman", "DejaVu Serif"], "font.size": 11, "axes.spines.top": False, "axes.spines.right": False})
+    fig, ax = plt.subplots(figsize=(7.4, 4.2))
+    ax.plot(years.year, years.mean_baseline_coverage_pct, color=BLUE, lw=2.3, marker="o", label="Reported coverage")
+    ax.plot(years.year, years.mean_stressed_coverage_pct, color=ORANGE, lw=2.3, marker="o", label="After climate stress")
+    ax.fill_between(years.year, years.mean_stressed_coverage_pct, years.mean_baseline_coverage_pct, color=ORANGE, alpha=.12)
+    ax.set_ylabel("Mean asset coverage (%)")
+    ax.set_xlabel("Year")
+    ax.set_xticks(years.year)
+    ax.legend(frameon=False, ncol=2)
+    fig.tight_layout()
+    fig.savefig(RESULTS / "Figure_6_Asset_Coverage_Before_After.png", dpi=300, bbox_inches="tight")
+    plt.close(fig)
+
     primary = panel[panel.actual_asset_coverage_pct.notna()].copy()
     cutoffs = np.array([5, 10, 15, 20, 25, 30])
     before = [(primary.baseline_buffer_pp <= c).sum() for c in cutoffs]

@@ -1,5 +1,20 @@
 # Changelog
 
+## v2.7.0 — 2026-08-20
+
+- Validated six annual all-U.S. CRSP daily extracts and added the licensed-data checksum manifest.
+- Added value-weighted FF49 industry climate betas and 49 converged estimator-aligned DCC systems.
+- Added the BDC-label-to-FF49 crosswalk and its coverage and imputation audits.
+- Added the main DCC-FF49 portfolio-mechanism result: 0.152* (clustered SE 0.085), with a separately reported wild-cluster p-value of 0.153.
+- Rebuilt the concise academic PDF and editable Word report with conventional stars, standard errors in parentheses, five tables, and seven figure panels.
+
+## v2.6.0 — 2026-08-20
+
+- Kept the six-page narrative concise while restoring the important evidence to the paper.
+- Added BDC descriptive statistics, the full main exposure regression, and the consolidated continuation/credit robustness table.
+- Restored the factor-sensitivity, bank-level change, published-versus-replicated, exposure-diagnostic, and asset-coverage figures.
+- Combined related diagnostics into appendix panels so the expanded evidence set fits in 17 pages.
+
 ## v2.5.0 — 2026-08-19
 
 - Reduced the paper from 18 to 12 pages by consolidating data and method, removing the in-paper robustness appendix, and retaining three nonredundant figures.
