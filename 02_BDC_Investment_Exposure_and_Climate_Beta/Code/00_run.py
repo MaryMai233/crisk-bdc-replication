@@ -36,10 +36,13 @@ def main() -> None:
         run("07_audit_industry_dictionary.py")
         run("08_inference_and_classification_robustness.py")
         run("09_factor_continuation_frequency_robustness.py", "--reestimate-weekly")
+        run("12_estimate_kol_top75_dcc_robustness.py")
+        run("13_estimate_kol_top75_weekly_dcc_robustness.py")
     else:
         run("04c_estimate_ff49_dcc_portfolio_mechanism.py")
     run("05_make_results.py")
     run("11_make_ff49_dcc_results.py")
+    run("14_make_top75_results.py")
     if not args.full:
         run("09_factor_continuation_frequency_robustness.py")
     run("10_descriptive_statistics.py")

@@ -74,13 +74,14 @@ def main():
         return ""
 
     section_a = [
-        ["", "Annual beta", "Daily beta", "Signed CRISK", "Positive CRISK"],
-        ["2020 increase", *[
-            f"{tests.loc[x, 'estimate']:.3f}{stars(tests.loc[x, 'p_value_two_sided'])}"
-            for x in ["T1", "T3", "T4", "T5"]
-        ]],
-        ["", *[f"({tests.loc[x, 'std_error']:.3f})" for x in ["T1", "T3", "T4", "T5"]]],
-        ["Observations", *[str(int(tests.loc[x, "n"])) for x in ["T1", "T3", "T4", "T5"]]],
+        ["", "Bank annual", "Bank daily", "BDC full", "BDC exposure"],
+        ["2020 beta increase", f"{tests.loc['T1', 'estimate']:.3f}{stars(tests.loc['T1', 'p_value_two_sided'])}",
+         f"{tests.loc['T3', 'estimate']:.3f}{stars(tests.loc['T3', 'p_value_two_sided'])}",
+         f"{bdc_paired.mean_change:.3f}{stars(bdc_paired.paired_t_p_two_sided)}",
+         f"{bdc_paired.h2_subsample_mean_change:.3f}{stars(bdc_paired.h2_paired_t_p_two_sided)}"],
+        ["", f"({tests.loc['T1', 'std_error']:.3f})", f"({tests.loc['T3', 'std_error']:.3f})",
+         f"({bdc_paired.mean_change_std_error:.3f})", f"({bdc_paired.h2_mean_change_se:.3f})"],
+        ["Observations", "10 institutions", "505 days", "20 institutions", "19 institutions"],
     ]
     section_b = [
         ["Published comparison", "Replicated", "Published", "Ratio", "Qualification"],
@@ -103,25 +104,9 @@ def main():
         "Total", "--", f"{top4_detail.mean_equity_lrmes_usd_bn.sum():.2f}",
         f"{top4_detail.mcrisk_usd_bn.sum():.1f}", f"{top4_detail.mean_identity_error_usd_bn.abs().max():.2e}",
     ])
-    section_d = [
-        ["Sample", "Mean beta 2019", "Mean beta 2020", "Mean change", "Positive changes"],
-        [
-            "20 BDCs", f"{bdc_paired.mean_beta_2019:.3f}", f"{bdc_paired.mean_beta_2020:.3f}",
-            f"{bdc_paired.mean_change:.3f}{stars(bdc_paired.paired_t_p_two_sided)}",
-            f"{int(bdc_paired.positive_changes)}/{int(bdc_paired.observations)}",
-        ],
-        ["", "", "", f"({bdc_paired.mean_change_std_error:.3f})", ""],
-        [
-            "19-BDC H2 subsample", f"{bdc_paired.h2_subsample_mean_beta_2019:.3f}",
-            f"{bdc_paired.h2_subsample_mean_beta_2020:.3f}",
-            f"{bdc_paired.h2_subsample_mean_change:.3f}{stars(bdc_paired.h2_paired_t_p_two_sided)}",
-            f"{int(bdc_paired.h2_subsample_positive_changes)}/{int(bdc_paired.h2_subsample_observations)}",
-        ],
-        ["", "", "", f"({bdc_paired.h2_mean_change_se:.3f})", ""],
-    ]
     note = (
         "Daily diagnostics use HAC(203); lag sensitivity is archived. Because institutions share one factor realization, paired statistics measure cross-institution consistency rather than independent event replications. "
-        "Panel A's signed CRISK is the difference between calendar-year daily means; Panel B's benchmark-aligned increase uses December-average beta with year-end debt and equity. The raw daily peak follows the 9 November 2020 Pfizer announcement, not the March oil-price break. "
+        "Panel B's benchmark-aligned CRISK increase uses December-average beta with year-end debt and equity. The raw daily peak follows the 9 November 2020 Pfizer announcement, not the March oil-price break. "
         "Panel C applies mCRISK = 0.92 x E x LRMES daily and then averages the products; mean beta is reported only for reference. "
         f"The replicated-to-published mCRISK ratio of {decomposition.mcrisk_ratio_replicated_to_published:.3f} equals an equity-scale ratio of {decomposition.equity_scale_ratio:.3f} times a climate-loss-rate ratio of {decomposition.loss_rate_ratio:.3f}. "
         "The published text rounds the increase to USD 425 billion; its Table 2 sums to USD 430.89 billion. P-values are two-sided. ***, **, and * denote p<0.01, p<0.05, and p<0.10."
@@ -130,7 +115,6 @@ def main():
         {"label": "Panel A: Statistical validation", "rows": section_a, "widths": [2600, 1700, 1700, 1700, 1700]},
         {"label": "Panel B: Published-magnitude comparison", "rows": section_b, "widths": [3600, 1450, 1450, 1450, 1450]},
         {"label": "Panel C: End-2020 top-four 127-day mean construction", "rows": section_c, "widths": [2300, 1600, 2300, 2000, 1800]},
-        {"label": "Panel D: BDC time-series validation", "rows": section_d, "widths": [2500, 1900, 1900, 1800, 2200]},
     ])
 
     plt.rcParams.update({"font.family": "serif", "font.serif": ["Nimbus Roman", "Times New Roman", "DejaVu Serif"], "font.size": 11, "axes.spines.top": False, "axes.spines.right": False})
@@ -160,16 +144,19 @@ def main():
     plt.close(fig)
 
     top = daily[daily.current_ticker.isin(["BAC", "C", "JPM", "WFC"]) & daily.date.between("2019-01-01", "2020-12-31")]
-    agg = top.groupby("date", as_index=False).agg(raw_signed=("crisk_8pct_mn", "sum"), raw_positive=("crisk_8pct_positive_mn", "sum"))
-    agg[["raw_signed", "raw_positive"]] /= 1000
-    agg["smooth_signed"] = agg.raw_signed.rolling(127, min_periods=127).mean()
-    agg["smooth_positive"] = agg.raw_positive.rolling(127, min_periods=127).mean()
+    agg = top.groupby("date", as_index=False).agg(
+        raw_mcrisk=("mcrisk_8pct_mn", "sum"),
+        raw_crisk=("crisk_8pct_positive_mn", "sum"),
+    )
+    agg[["raw_mcrisk", "raw_crisk"]] /= 1000
+    agg["smooth_mcrisk"] = agg.raw_mcrisk.rolling(127, min_periods=127).mean()
+    agg["smooth_crisk"] = agg.raw_crisk.rolling(127, min_periods=127).mean()
     fig, axes = plt.subplots(2, 1, figsize=(7.4, 6.1), sharex=True)
-    axes[0].plot(agg.date, agg.raw_signed, color=BLUE, lw=1.35, label="Signed CRISK")
-    axes[0].plot(agg.date, agg.raw_positive, color=ORANGE, lw=1.35, label="Positive CRISK")
+    axes[0].plot(agg.date, agg.raw_mcrisk, color=BLUE, lw=1.35, label="mCRISK")
+    axes[0].plot(agg.date, agg.raw_crisk, color=ORANGE, lw=1.35, label="CRISK")
     axes[0].set_title("Raw daily series", loc="left", fontsize=11)
-    axes[1].plot(agg.date, agg.smooth_signed, color=BLUE, lw=2.1, label="Signed CRISK")
-    axes[1].plot(agg.date, agg.smooth_positive, color=ORANGE, lw=2.1, label="Positive CRISK")
+    axes[1].plot(agg.date, agg.smooth_mcrisk, color=BLUE, lw=2.1, label="mCRISK")
+    axes[1].plot(agg.date, agg.smooth_crisk, color=ORANGE, lw=2.1, label="CRISK")
     axes[1].set_title("Trailing 127-trading-day means", loc="left", fontsize=11)
     events = [
         (pd.Timestamp("2020-03-09"), "Oil", "#8B0000", "--"),

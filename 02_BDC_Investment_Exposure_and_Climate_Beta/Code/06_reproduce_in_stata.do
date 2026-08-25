@@ -158,3 +158,33 @@ esttab dcc49_1 dcc49_2 dcc49_3 dcc49_4 dcc49_5 dcc49_6 using ///
              "Standard errors are clustered by BDC; *, **, and *** denote two-sided significance at 10%, 5%, and 1%.")
 
 display as text "Stata table written to Results/Table_3_FF49_DCC_Stata_Reproduction.rtf"
+
+* Cumulative-75-percent KOL continuation: daily and weekly DCC-FF49 portfolio beta.
+use "`root'/Data/Processed/bdc19_ff49_dcc_kol_top75_mechanism_panel_2021_2025.dta", clear
+encode ticker, gen(bdc_id)
+gen quarter_id = quarterly(fiscal_quarter, "YQ")
+format quarter_id %tq
+reghdfe z_beta_climate_equity_top75_repo z_ff49_dcc_top75_portfolio_clima, absorb(bdc_id quarter_id) vce(cluster bdc_id)
+estimates store top75_daily_e
+reghdfe z_beta_climate_asset_top75_repor z_ff49_dcc_top75_portfolio_clima, absorb(bdc_id quarter_id) vce(cluster bdc_id)
+estimates store top75_daily_a
+
+use "`root'/Data/Processed/bdc19_ff49_dcc_kol_top75_weekly_panel_2021_2025.dta", clear
+encode ticker, gen(bdc_id)
+gen quarter_id = quarterly(fiscal_quarter, "YQ")
+format quarter_id %tq
+reghdfe z_beta_climate_equity_top75_week z_portfolio_beta_top75_weekly_qe, absorb(bdc_id quarter_id) vce(cluster bdc_id)
+estimates store top75_weekly_e
+reghdfe z_beta_climate_asset_top75_weekl z_portfolio_beta_top75_weekly_qm, absorb(bdc_id quarter_id) vce(cluster bdc_id)
+estimates store top75_weekly_a
+
+esttab top75_daily_e top75_daily_a top75_weekly_e top75_weekly_a using ///
+    "`root'/Results/Table_S2_KOL_Top75_Stata_Reproduction.rtf", replace rtf ///
+    b(3) se(3) star(* 0.10 ** 0.05 *** 0.01) label compress ///
+    mtitles("75% daily equity" "75% daily asset" "75% weekly equity" "75% weekly asset") ///
+    stats(N r2, fmt(0 3) labels("Observations" "R-squared")) ///
+    title("Cumulative-75-Percent KOL Basket Robustness") ///
+    addnotes("All specifications include BDC and quarter fixed effects." ///
+             "Standard errors are clustered by BDC; inference is two-sided.")
+
+display as text "Stata table written to Results/Table_S2_KOL_Top75_Stata_Reproduction.rtf"

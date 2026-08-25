@@ -101,6 +101,7 @@ def clean_body(document: Document) -> None:
         "Table [tab:h2main]": "Table 3",
         "Table [tab:factor]": "Table 4",
         "Table [tab:stress]": "Table 5",
+        "Table [tab:y14compare]": "Table A1",
         "Figure [fig:bankcross]": "Figure A1",
         "Figure [fig:benchmarkplot]": "Figure A1",
         "Figure [fig:ff49mechanism]": "Figure 3",
@@ -110,8 +111,10 @@ def clean_body(document: Document) -> None:
         "[tab:h2main]": "3",
         "[tab:factor]": "4",
         "[tab:stress]": "5",
+        "[tab:y14compare]": "A1",
         "[eq:crisk]": "(5)",
-        "[eq:coverage]": "(6)",
+        "[eq:aggregatecrisk]": "(6)",
+        "[eq:coverage]": "(7)",
     }
     for paragraph in document.paragraphs:
         text = paragraph.text
@@ -134,80 +137,6 @@ def clean_body(document: Document) -> None:
         if paragraph.text.startswith("KOL supplies the coal return"):
             text = paragraph.text.replace("December 2024 .", "December 2024 (IEEFA, 2025).")
             replace_paragraph(paragraph, text)
-        if paragraph.text.startswith("Table\u00a0 and Figure\u00a0 show that mean bank climate beta"):
-            replace_paragraph(
-                paragraph,
-                "Table 1 and Figure 1 show that mean bank climate beta rises from 0.193 in 2019 to 0.424 in 2020. "
-                "The paired increase is 0.230 (standard error 0.029), and all ten changes are positive. The daily "
-                "diagnostic gives the same point estimate with HAC(203) standard error 0.104. Both estimates are "
-                "significant at conventional levels. These statistics establish a common directional movement across "
-                "institutions; because all banks face the same factor realization, they are not ten independent event "
-                "replications. The twenty-BDC validation is similarly positive: the mean change is 0.177 (standard "
-                "error 0.023), with 19 of 20 changes positive. Figure A1 displays the institution-level changes and "
-                "the replication ratios.",
-            )
-        if paragraph.text.startswith("The magnitude comparison is also close"):
-            replace_paragraph(
-                paragraph,
-                "The magnitude comparison is also close. End-2020 top-four marginal CRISK is $221.7 billion versus "
-                "the published $260.0 billion; the signed CRISK increase is $372.8 billion versus $430.89 billion. "
-                "The 85.3-percent marginal-CRISK ratio equals a 0.972 equity-scale ratio times a 0.877 climate-loss-rate "
-                "ratio. Panel C preserves the nonlinear identity by computing 0.92E×LRMES daily and then averaging, "
-                "rather than evaluating LRMES at mean beta.",
-            )
-        if paragraph.text.startswith("The annual result does not isolate a single transition event"):
-            replace_paragraph(
-                paragraph,
-                "The annual result does not isolate a single transition event. The raw cross-bank mean is 0.1974 on "
-                "9 March, 0.6329157 on 17 March, and reaches 1.0318 on 10 November after the Pfizer announcement. The "
-                "17 March value is a raw ten-bank cross-sectional mean; WFC’s numerically similar 0.6328319 is a "
-                "different object—its 31 December 127-day beta. The code audit verifies the two source slices and their "
-                "8.37×10⁻⁵ difference. Figure 2 therefore separates the oil, COVID, and vaccine/value-rotation dates "
-                "rather than assigning the November maximum to the March shock.",
-            )
-        if paragraph.text.startswith("Table\u00a0 describes the BDC panel"):
-            replace_paragraph(
-                paragraph,
-                "Table 2 describes the BDC panel, while Table 3 and Figure 3 show how measurement resolution changes "
-                "the portfolio result. In the firm- and quarter-fixed-effects equity specification, the coefficient is "
-                "−0.062 for the broad brown share, 0.055 for FF12 portfolio beta, 0.103 for rolling-OLS FF49 beta, and "
-                "0.152 for estimator-aligned DCC-FF49 beta. The final estimate has a clustered standard error of 0.085 "
-                "and is significant at 10 percent under conventional two-sided inference. It remains 0.163 when "
-                "low-confidence mappings are excluded, 0.196 after dropping 2021, and 0.150 after dropping the four "
-                "geography-table imputations. The corresponding asset-beta estimate is 0.153 (standard error 0.100), "
-                "nearly identical in magnitude but less precise. With 19 clusters, the equity wild-cluster bootstrap "
-                "p-value is 0.153. The evidence is therefore suggestive and measurement-sensitive, not a robust "
-                "rejection under every inference method.",
-            )
-        if paragraph.text.startswith("Table\u00a0 and Figure\u00a0 report a separate factor-maintenance diagnostic"):
-            replace_paragraph(
-                paragraph,
-                "Table 4 and Figure 4 report a separate factor-maintenance diagnostic. Holding the international "
-                "top-five basket fixed, weekly aggregation raises KOL tracking from 0.454 to 0.832 and the coarse-share "
-                "equity coefficient from 0.025 to 0.154. The original sample ends in 2021, so the published basket "
-                "bridges roughly one year after KOL liquidation; the article does not state a periodic refresh rule. "
-                "Extending the same constituents through 2025 is a different maintenance problem, especially after "
-                "Adaro’s 2024 thermal-coal separation. A live continuation needs transparent refresh triggers for "
-                "mergers, spin-offs, and material business-mix changes. Public information does not establish V-Lab’s "
-                "current production basket.",
-            )
-        if paragraph.text.startswith("The baseline buffer is"):
-            replace_paragraph(
-                paragraph,
-                "The baseline buffer is AC − T. Equation (5) is retained only for the bank replication; "
-                "its k = 8% parameter is not treated as a BDC capital requirement. Robustness uses "
-                "month-end LRMES, book equity, a market-factor placebo, and each factor’s empirical "
-                "first-percentile six-month return (−34.1% for climate and −16.8% for the market).",
-            )
-        if paragraph.text.startswith("The statutory mapping in Equation"):
-            replace_paragraph(
-                paragraph,
-                "The statutory mapping in Equation (6) reduces mean coverage from 203.28% to 197.43% "
-                "and the mean buffer from 53.15 to 47.30 percentage points. Table 5 and Figure 5 report "
-                "5.85 points of mean compression, no primary-scenario breach, and an increase from six "
-                "to eleven observations within 10 points of the threshold. The bank k = 8% calculation "
-                "is shown only as a non-portability check and is not used to characterize BDC capital adequacy.",
-            )
 
 
 def style_document(document: Document) -> None:
@@ -299,7 +228,15 @@ def add_academic_table(
             bottom = "8" if r_idx in header_rows or r_idx == len(rows) - 1 else None
             set_cell_border(cell, top=top, bottom=bottom)
         if r_idx in panel_rows and len(row) == 1:
-            table.cell(r_idx, 0).merge(table.cell(r_idx, len(table.columns) - 1))
+            merged = table.cell(r_idx, 0).merge(table.cell(r_idx, len(table.columns) - 1))
+            merged.text = row[0]
+            merged_paragraph = merged.paragraphs[0]
+            merged_paragraph.paragraph_format.space_after = Pt(0)
+            merged_paragraph.paragraph_format.space_before = Pt(0)
+            merged_paragraph.paragraph_format.line_spacing = 1.0
+            merged_paragraph.alignment = WD_ALIGN_PARAGRAPH.LEFT
+            for run in merged_paragraph.runs:
+                set_font(run, font_size, bold=True)
     add_note(document, note)
 
 
@@ -320,11 +257,11 @@ def append_tables_and_figures(document: Document) -> None:
         "Table 1",
         "Bank Replication of the 2020 Climate-Risk Shock",
         [
-            ["", "Annual beta", "Daily beta", "Signed CRISK", "Positive CRISK"],
-            ["Panel A: 2020 changes"],
-            ["Estimate", "0.230***", "0.230**", "343.019***", "181.394***"],
-            ["", "(0.029)", "(0.104)", "(81.640)", "(42.114)"],
-            ["Observations", "10", "505", "505", "505"],
+            ["", "Bank annual", "Bank daily", "BDC full", "BDC exposure"],
+            ["Panel A: 2020 climate-beta changes"],
+            ["Estimate", "0.230***", "0.230**", "0.177***", "0.179***"],
+            ["", "(0.029)", "(0.104)", "(0.023)", "(0.024)"],
+            ["Observations", "10 institutions", "505 days", "20 institutions", "19 institutions"],
             ["Panel B: Published-magnitude comparison"],
             ["", "Replicated", "Published", "Ratio", "Qualification"],
             ["Annual-average peak year", "2021", "2020", "—", "2020–2021 plateau"],
@@ -339,14 +276,10 @@ def append_tables_and_figures(document: Document) -> None:
             ["JPM", "0.5015", "93.69", "86.2", "0.00e+00"],
             ["WFC", "0.6328", "36.76", "33.8", "7.28e−15"],
             ["Total", "—", "240.94", "221.7", "7.28e−15"],
-            ["Panel D: BDC time-series validation"],
-            ["Sample", "Mean beta 2019", "Mean beta 2020", "Mean change", "Positive changes"],
-            ["20 BDCs", "0.068", "0.245", "0.177***\n(0.023)", "19/20"],
-            ["19-BDC exposure sample", "0.065", "0.244", "0.179***\n(0.024)", "18/19"],
         ],
-        {1, 5, 12, 19},
-        {0, 6, 13, 20},
-        "Panel A’s CRISK estimates are differences between daily calendar-year means. Daily diagnostics use HAC(203). Because institutions share one factor realization, paired statistics measure cross-institution consistency rather than independent event replications. Panel C applies mCRISK = 0.92E×LRMES daily before averaging; mean beta is reference only. ***, **, and * denote two-sided significance at 1%, 5%, and 10%.",
+        {1, 5, 12},
+        {0, 6, 13},
+        "Panel A reports paired changes; the bank daily diagnostic uses HAC(203). Because institutions share one factor realization, the statistics measure cross-institution consistency rather than independent event replications. Panel C applies mCRISK = 0.92E×LRMES daily before averaging; mean beta is reference only. ***, **, and * denote two-sided significance at 1%, 5%, and 10%.",
         7.1,
     )
 
@@ -397,10 +330,15 @@ def append_tables_and_figures(document: Document) -> None:
             ["Quarter fixed effects", "Yes", "Yes", "Yes", "Yes", "Yes", "Yes"],
             ["Observations", "380", "380", "380", "380", "380", "304"],
             ["R²", "0.445", "0.445", "0.447", "0.450", "0.450", "0.454"],
+            ["Panel C: Factor breadth and frequency, firm and quarter fixed effects"],
+            ["", "Top-five daily\nEquity", "Top-five daily\nAsset", "75% daily\nEquity", "75% daily\nAsset", "75% weekly\nEquity", "75% weekly\nAsset"],
+            ["Portfolio climate beta", "0.152*\n(0.085)", "0.153\n(0.100)", "0.184\n(0.114)", "0.169\n(0.135)", "0.173\n(0.150)", "0.155\n(0.176)"],
+            ["KOL tracking correlation", "0.454", "0.454", "0.790", "0.790", "0.945", "0.945"],
+            ["Observations", "380", "380", "380", "380", "380", "380"],
         ],
-        {1, 10},
-        {0, 11},
-        "Outcomes and portfolio measures are standardized. Industry and BDC betas use the same median scalar-DCC parameter vector. Standard errors are clustered by BDC. The full-sample equity wild-cluster bootstrap p-value is 0.153 with 9,999 draws. ***, **, and * denote two-sided significance at 1%, 5%, and 10%.",
+        {1, 10, 18},
+        {0, 11, 19},
+        "Outcomes and portfolio measures are standardized. Industry and BDC betas use the same median scalar-DCC parameter vector. Standard errors are clustered by BDC. The full-sample top-five equity wild-cluster p-value is 0.153; the cumulative-75-percent daily value is 0.230. The 15-security basket is selected from official N-PORT holdings before observing BDC outcomes. ***, **, and * denote two-sided significance at 1%, 5%, and 10%.",
         7.6,
     )
 
@@ -456,13 +394,36 @@ def append_tables_and_figures(document: Document) -> None:
         7.5,
     )
 
+    add_academic_table(
+        document,
+        "Table A1",
+        "Published Y-14 Portfolio Validation and Robustness",
+        [
+            ["", "(1)", "(2)", "(3)", "(4)"],
+            ["Panel A: Published Table 1 and Appendix F"],
+            ["Main committed-exposure beta", "1.718***\n(5.67)", "1.524***\n(5.80)", "1.400***\n(6.37)", "1.112***\n(3.58)"],
+            ["Unlevered industry beta", "2.817***\n(3.50)", "1.997***\n(3.04)", "2.347***\n(5.10)", "1.866***\n(3.29)"],
+            ["Utilized-exposure beta", "1.588***\n(5.64)", "1.361***\n(6.14)", "1.089***\n(5.31)", "0.715***\n(3.02)"],
+            ["Listed-borrower matched beta", "0.752***\n(3.97)", "0.624***\n(4.04)", "0.649***\n(6.57)", "0.528***\n(5.83)"],
+            ["Observations", "664–666", "664–666", "664–666", "664–666"],
+            ["Panel B: Published actual-weight and shuffled-weight placebo"],
+            ["Actual portfolio beta", "1.680***\n(5.68)", "1.351***\n(6.30)", "0.988***\n(5.28)", "0.949**\n(2.81)"],
+            ["Shuffled portfolio beta", "1.078\n(1.61)", "0.143\n(0.29)", "−0.513\n(−1.84)", "0.523\n(1.31)"],
+            ["Observations", "339", "339", "339", "339"],
+        ],
+        {1, 7},
+        {0},
+        "Coefficients and t-statistics are transcribed from Jung, Engle, and Berner (2025), Table 1, Tables F.1–F.3, and Table IA.E.1. Every robustness in Panel A preserves continuous borrower-industry or matched-borrower climate beta; none replaces it with a binary brown-loan share. ***, **, and * denote significance at 1%, 5%, and 10%.",
+        7.2,
+    )
+
     b1 = ROOT / "01_Bank_CRISK_Replication" / "Results"
     b2 = ROOT / "02_BDC_Investment_Exposure_and_Climate_Beta" / "Results"
     b3 = ROOT / "03_BDC_Asset_Coverage_Stress_Test" / "Results"
     add_figure(document, "Figure 1", "Annual Climate Beta for Banks and BDCs", [(b1 / "Figure_1_Aggregate_Climate_Beta.png", 6.35)], "The upper panel plots annual cross-institution mean dynamic climate beta; the lower panel reports active institutions. KOL is used through 14 December 2020 and the fixed top-five basket thereafter.")
     add_figure(document, "Figure 2", "Top-Four Bank CRISK Around the 2020 Shock", [(b1 / "Figure_2_Top_Four_Bank_CRISK.png", 6.35)], "The upper panel reports raw daily series and the lower panel reports trailing 127-day means. Vertical markers identify the oil-price break, COVID dislocation, and Pfizer–BioNTech announcement.")
     add_figure(document, "Figure 3", "Measurement Resolution and the BDC Portfolio Mechanism", [(b2 / "Figure_3_FF49_DCC_Portfolio_Mechanism.png", 6.35)], "Bars are 90% confidence intervals under BDC-clustered standard errors; orange markers denote conventional two-sided significance at 10%. The corresponding wild-cluster bootstrap does not reject at 10%.")
-    add_figure(document, "Figure 4", "Exposure Sensitivity to Factor Construction", [(b2 / "Figure_5_Factor_Continuation_Sensitivity.png", 6.35)], "The connected top-five points hold basket content fixed and change frequency; the U.S. coal point also changes economic content. The correlation-one extrapolation is descriptive.")
+    add_figure(document, "Figure 4", "KOL Basket Breadth and the BDC Portfolio Mechanism", [(b2 / "Figure_5_KOL_Basket_Breadth_and_BDC_Mechanism.png", 6.35)], "Panel A compares pre-liquidation KOL tracking for the published top-five continuation and the pre-specified 15-security basket covering 77.1% of the official September 2020 N-PORT schedule. Panel B reports firm- and quarter-fixed-effects DCC-FF49 portfolio coefficients with 90% confidence intervals.")
     add_figure(document, "Figure 5", "BDC Asset Coverage Before and After Climate Stress", [(b3 / "Figure_6_Asset_Coverage_Before_After.png", 5.8), (b3 / "Figure_7_Threshold_Proximity.png", 5.8)], "Panel A plots mean reported and climate-stressed asset coverage. Panel B counts BDC-quarter observations within cumulative distances from the statutory threshold. No observation crosses the threshold in the primary scenario.")
     add_figure(document, "Figure A1", "Cross-Institution Replication Diagnostics", [(b1 / "Figure03_Bank_Level_Beta_Changes.png", 5.8), (b1 / "Figure04_Published_vs_Replicated.png", 5.8)], "Panel A shows that all ten banks have positive 2019–2020 beta changes. Panel B compares published and independently replicated top-four magnitudes.")
     add_figure(document, "Figure A2", "BDC Exposure Diagnostics", [(b2 / "Figure_3_Investment_Exposure_and_Climate_Beta.png", 5.8), (b2 / "Figure_4_Investment_Exposure_Trends.png", 5.8)], "Panel A provides the raw coarse-share relationship retained in Table 4. Panel B plots cross-sectional exposure summaries through time; it does not establish within-firm persistence. The main DCC-FF49 result appears in Table 3 and Figure 3.")

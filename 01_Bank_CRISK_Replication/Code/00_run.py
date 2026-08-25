@@ -30,6 +30,7 @@ def main() -> None:
             "02_estimate_dcb_crisk.py",
             "03_export_stata_data.py",
             "04_validate_bank_replication.py",
+            "08_build_kol_top75_continuation.py",
         ):
             run(script)
     run("05_make_results.py")

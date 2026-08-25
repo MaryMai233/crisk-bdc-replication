@@ -64,7 +64,7 @@ Replication, Factor Maintenance, and Regulatory Capacity\par}
 \vfill
 \begin{minipage}{0.86\textwidth}
 \noindent\textbf{Abstract.}
-This paper replicates CRISK for ten large U.S. banks and applies its market-based loss mechanism to business development companies (BDCs). Mean bank climate beta rises by 0.230 in 2020 (standard error 0.029), and replicated top-four marginal CRISK and signed CRISK increases recover 85.3 and 86.5 percent of published magnitudes. For BDCs, I replace a coarse carbon-intensive share with a loan-portfolio climate beta constructed from value-weighted Fama--French 49 industries and the same dynamic conditional beta estimator used for BDC equity. The firm- and quarter-fixed-effects equity coefficient is 0.152 (standard error 0.085), significant at 10 percent under conventional BDC-clustered inference, but not under a small-cluster wild bootstrap. The corresponding asset-beta estimate is 0.153 (standard error 0.100). The post-KOL fixed basket tracks KOL at 0.454 daily and 0.832 weekly, showing that a short continuation rule requires maintenance when extended for five years. Under the BDC statutory asset-coverage rule, the maintained climate scenario reduces the mean regulatory buffer by 5.85 percentage points; matched-tail climate compression is 0.343 of the market benchmark.
+This paper replicates CRISK for ten large U.S. banks and asks why its portfolio validation is less precise for business development companies (BDCs). Mean bank climate beta rises by 0.230 in 2020 (standard error 0.029), while replicated top-four $m$CRISK and CRISK increases recover 85.3 and 86.5 percent of published magnitudes. The original Y-14 validation uses millions of loan-level observations and remains significant at 1 percent across committed, utilized, unlevered, and firm-matched specifications. Public BDC filings instead provide 380 aggregated firm-quarters. An estimator-aligned DCC--FF49 portfolio beta yields a firm- and quarter-fixed-effects equity coefficient of 0.152 (standard error 0.085), conventionally significant at 10 percent but not under wild-cluster inference. Expanding the post-KOL continuation from five holdings to a pre-specified 15-security basket covering 77.1 percent of official N-PORT holdings raises daily KOL tracking from 0.454 to 0.790, yet the coefficient is 0.184 (standard error 0.114). Thus the BDC precision gap is not explained by basket breadth alone; it primarily reflects disclosure resolution and limited portfolio variation. The maintained climate scenario reduces the mean statutory asset-coverage buffer by 5.85 percentage points without a breach.
 
 \vspace{0.16in}
 \noindent\textbf{Keywords:} climate risk; CRISK; business development companies; private credit; asset coverage
@@ -81,7 +81,7 @@ This paper replicates CRISK for ten large U.S. banks and applies its market-base
 
 CRISK maps a traded stranded-asset factor into dynamic climate beta and bank capital shortfall \citep{JungEngleBerner2025}. I replicate its bank benchmark and examine two implementation questions: how to measure the portfolio channel in publicly traded private credit, and how to maintain the factor after KOL liquidates. The application is to business development companies (BDCs), whose binding capital rule is statutory asset coverage rather than a bank capital ratio.
 
-Three results follow. First, mean bank climate beta rises by 0.230 in 2020 (SE 0.029); all ten banks move in the predicted direction, and top-four marginal and signed CRISK increases recover 85.3 and 86.5 percent of the published magnitudes. The daily maximum occurs after the November vaccine announcement, so the annual result cannot be attributed to the March oil-price break alone. Second, measurement resolution matters for BDCs. The firm-fixed-effects equity coefficient progresses from $-0.062$ for a coarse brown share to 0.055 for FF12 portfolio beta, 0.103 for rolling-OLS FF49 beta, and 0.152 for estimator-aligned DCC-FF49 beta. The last estimate has a conventional two-sided $p$-value of 0.090, although small-cluster bootstrap inference is weaker. Third, the maintained climate scenario reduces the BDC statutory asset-coverage buffer by 5.85 percentage points without a primary-scenario breach. The paper therefore delivers a replication, a portfolio-measurement diagnostic, a factor-maintenance result, and a BDC-specific capacity calibration.
+Three results follow. First, mean bank climate beta rises by 0.230 in 2020 (SE 0.029); all ten banks move in the predicted direction, and top-four $m$CRISK and CRISK increases recover 85.3 and 86.5 percent of the published magnitudes. The daily maximum follows the November vaccine announcement, so the annual result cannot be attributed to the March oil-price break alone. Second, BDC evidence improves as portfolio measurement becomes more granular: the firm-fixed-effects equity coefficient progresses from $-0.062$ for a coarse brown share to 0.152 for estimator-aligned DCC--FF49 portfolio beta. A broader, pre-specified KOL continuation improves factor tracking but not inference, showing that the remaining gap is primarily a disclosure-and-power problem rather than only a factor problem. Third, the maintained climate scenario reduces the BDC statutory asset-coverage buffer by 5.85 percentage points without a primary-scenario breach.
 
 \section{Data and Method}
 
@@ -102,7 +102,7 @@ CF_t=0.70R_{Coal,t}+0.30R_{XLE,t}-R_{SPY,t}.
 \label{eq:factor}
 \end{equation}
 
-KOL supplies the coal return through 14 December 2020. Thereafter I follow the published rule: the fixed, normalized weights of its five largest pre-liquidation holdings, converted to U.S. dollars. The basket's daily, weekly, and monthly correlations with KOL are 0.454, 0.832, and 0.931 over the common 2019--2020 window. This frequency gap is consistent with non-synchronous international closes. The rule also drifts economically: Adaro separates a thermal-coal unit representing 89 percent of group revenue in December 2024 \citep{IEEFA2025}.
+KOL supplies the coal return through 14 December 2020. The strict replication then follows the published rule: a fixed, dollar-converted return on its five largest pre-liquidation holdings. Its daily, weekly, and monthly correlations with KOL are 0.454, 0.832, and 0.931 over the common 2019--2020 window. The article does not specify a periodic refresh rule. I therefore pre-specify a breadth robustness using VanEck's official 30 September 2020 N-PORT schedule: securities are ranked by reported market value until cumulative coverage first exceeds 75 percent. The resulting 15-security basket covers 77.1 percent and raises tracking to 0.790 daily, 0.945 weekly, and 0.973 monthly \citep{VanEckNPORT2020}. The remaining frequency gap is consistent with non-synchronous international closes. Economic drift remains relevant because Adaro separates a thermal-coal unit representing 89 percent of group revenue in December 2024 \citep{IEEFA2025}.
 
 Institution returns are modeled with the market and climate factor using variance-targeted GJR-GARCH(1,1) and scalar DCC(1,1). Let $F_t=(M_t,CF_t)'$. Dynamic coefficients are
 
@@ -138,7 +138,14 @@ and bank CRISK is
 \label{eq:crisk}
 \end{equation}
 
-with $k=0.08$ and $m\CRISK=(1-k)E\times\LRMES$. Signed CRISK matches the published top-four aggregation; positive CRISK truncates institution surpluses at zero.
+with $k=0.08$ and $m\CRISK=(1-k)E\times\LRMES$. Following the article, aggregate CRISK sums only institution-level shortfalls,
+
+\begin{equation}
+\CRISK^{Agg}_t=\sum_i \max(\CRISK_{i,t},0).
+\label{eq:aggregatecrisk}
+\end{equation}
+
+The replication reports only CRISK and $m$CRISK in the paper; the untruncated institution-level quantity is retained in the code solely as an identity audit.
 
 The main BDC portfolio regression relates standardized traded climate beta to standardized DCC-FF49 portfolio climate beta, includes BDC and quarter fixed effects, and clusters standard errors by BDC. Controls, coarse brown-share models, FF12 and rolling-OLS measures, post-2021 estimation, mapping-confidence filters, and wild-cluster inference are retained as prespecified diagnostics. With only 19 clusters, conventional and small-cluster inference are reported separately.
 
@@ -155,27 +162,29 @@ The baseline buffer is $AC-T$. Equation~\eqref{eq:crisk} is retained only for th
 
 \tabref{tab:h1} and \figref{fig:annualbeta} show that mean bank climate beta rises from 0.193 in 2019 to 0.424 in 2020. The paired increase is 0.230 (standard error 0.029), and all ten changes are positive. The daily diagnostic gives the same point estimate with HAC(203) standard error 0.104. Both estimates are significant at conventional levels. These statistics establish a common directional movement across institutions; because all banks face the same factor realization, they are not ten independent event replications. The twenty-BDC validation is similarly positive: the mean change is 0.177 (standard error 0.023), with 19 of 20 changes positive. \figref{fig:bankcross} displays the institution-level changes and \figref{fig:benchmarkplot} displays the replication ratios.
 
-The magnitude comparison is also close. End-2020 top-four marginal CRISK is \$221.7 billion versus the published \$260.0 billion; the signed CRISK increase is \$372.8 billion versus \$430.89 billion. The 85.3-percent marginal-CRISK ratio equals a 0.972 equity-scale ratio times a 0.877 climate-loss-rate ratio. Panel C preserves the nonlinear identity by computing $0.92E_t\LRMES_t$ daily and then averaging, rather than evaluating LRMES at mean beta.
+The magnitude comparison is also close. End-2020 top-four $m$CRISK is \$221.7 billion versus the published \$260.0 billion; the CRISK increase is \$372.8 billion versus \$430.89 billion. The 85.3-percent $m$CRISK ratio equals a 0.972 equity-scale ratio times a 0.877 climate-loss-rate ratio. Panel C preserves the nonlinear identity by computing $0.92E_t\LRMES_t$ daily and then averaging, rather than evaluating LRMES at mean beta.
 
 The annual result does not isolate a single transition event. The raw cross-bank mean is 0.1974 on 9 March, 0.6329157 on 17 March, and reaches 1.0318 on 10 November after the Pfizer announcement. The 17 March value is a raw ten-bank cross-sectional mean; WFC's numerically similar 0.6328319 is a different object---its 31 December 127-day beta. The code audit verifies the two source slices and their $8.37\times10^{-5}$ difference. \figref{fig:bankcrisk} therefore separates the oil, COVID, and vaccine/value-rotation dates rather than assigning the November maximum to the March shock.
 
 \section{Finding 2: Portfolio Measurement and Factor Maintenance}
 
-\tabref{tab:desc} describes the BDC panel, while \tabref{tab:h2main} and \figref{fig:ff49mechanism} show how measurement resolution changes the portfolio result. In the firm- and quarter-fixed-effects equity specification, the coefficient is $-0.062$ for the broad brown share, 0.055 for FF12 portfolio beta, 0.103 for rolling-OLS FF49 beta, and 0.152 for estimator-aligned DCC-FF49 beta. The final estimate has a clustered standard error of 0.085 and is significant at 10 percent under conventional two-sided inference. It remains 0.163 when low-confidence mappings are excluded, 0.196 after dropping 2021, and 0.150 after dropping the four geography-table imputations. The corresponding asset-beta estimate is 0.153 (standard error 0.100), nearly identical in magnitude but less precise. With 19 clusters, the equity wild-cluster bootstrap $p$-value is 0.153. The evidence is therefore suggestive and measurement-sensitive, not a robust rejection under every inference method.
+\tabref{tab:desc} describes the BDC panel, while \tabref{tab:h2main} and \figref{fig:ff49mechanism} show how measurement resolution changes the result. In the firm- and quarter-fixed-effects equity specification, the coefficient is $-0.062$ for the broad brown share, 0.055 for FF12 portfolio beta, 0.103 for rolling-OLS FF49 beta, and 0.152 for estimator-aligned DCC--FF49 beta. The last estimate has a clustered standard error of 0.085 and is significant at 10 percent under conventional two-sided inference. It remains 0.163 when low-confidence mappings are excluded and 0.196 after dropping 2021. With 19 clusters, however, the equity wild-cluster $p$-value is 0.153.
 
-This pattern explains why the coarse share was inconclusive without implying that the original CRISK result was fragile. The published bank study uses 666 bank-quarters and millions of borrower-level loans; BDC filings disclose aggregated labels and provide only 380 institution-quarters. Better industry matching recovers a positive within-BDC relationship, but it cannot recreate loan-level variation.
+The original bank validation is much stronger, but it tests a more informative exposure. Its main Y-14 coefficients range from 1.112 to 1.718 and carry three stars in all four specifications. Unlevered-industry, utilized-exposure, and listed-borrower matched versions also carry three stars in every specification; the actual-weight placebo comparison remains significant while shuffled portfolio weights do not. These are not robustness tests of a binary brown-loan share. They preserve continuous climate-beta variation across three-digit NAICS industries or matched borrowers. \tabref{tab:y14compare} reports the published coefficients.
 
-\tabref{tab:factor} and \figref{fig:factorsensitivity} report a separate factor-maintenance diagnostic. Holding the international top-five basket fixed, weekly aggregation raises KOL tracking from 0.454 to 0.832 and the coarse-share equity coefficient from 0.025 to 0.154. The original sample ends in 2021, so the published basket bridges roughly one year after KOL liquidation; the article does not state a periodic refresh rule. Extending the same constituents through 2025 is a different maintenance problem, especially after Adaro's 2024 thermal-coal separation. A live continuation needs transparent refresh triggers for mergers, spin-offs, and material business-mix changes. Public information does not establish V-Lab's current production basket.
+The BDC precision gap has four sources. First, Y-14 contains more than five million loans and 666 bank-quarters; the BDC panel contains 380 public filing summaries. Second, the Y-14 weights are loan-level committed or utilized amounts, whereas BDC labels often pool heterogeneous borrowers. Third, the BDC sample begins after the 2020 repricing and supplies only 20 quarters. Fourth, BDC equity reflects credit spreads, NAV discounts, liquidity, dividends, leverage, and manager effects in addition to portfolio transition risk. A weak coarse-share regression therefore does not show that market climate beta is invalid; it shows that public BDC disclosure cannot reproduce the original loan-level validation design. \tabref{tab:factor} retains the coarse-share classification, timing, power, and high-yield-return diagnostics.
+
+\figref{fig:factorsensitivity} isolates the factor issue. Expanding the continuation from five names to the official cumulative-75-percent basket raises daily KOL tracking from 0.454 to 0.790. The firm-and-quarter fixed-effects equity coefficient rises from 0.152 to 0.184, but its standard error also rises from 0.085 to 0.114; the conventional two-sided $p$-value is 0.124 and the wild-cluster $p$-value is 0.230. Weekly estimation with the same 15 names yields 0.173 (standard error 0.150). Thus the top-five basket was too narrow for a five-year extension, but basket breadth alone does not explain the BDC inference gap. The published top-five rule remains the strict replication, and the 75-percent basket is reported as a pre-specified robustness rather than selected on BDC significance.
 
 \section{Finding 3: BDC Statutory Capacity}
 
-The statutory mapping in Equation~\eqref{eq:coverage} reduces mean coverage from 203.28 to 197.43 percent and the mean buffer from 53.15 to 47.30 percentage points. \tabref{tab:stress} and \figref{fig:coverage} report 5.85 points of mean compression, no primary-scenario breach, and an increase from six to eleven observations within 10 points of the threshold. The bank $k=8\%$ calculation is shown only as a non-portability check and is not used to characterize BDC capital adequacy.
+The statutory mapping in Equation~\eqref{eq:coverage} reduces mean coverage from 203.28 to 197.43 percent and the mean buffer from 53.15 to 47.30 percentage points. \tabref{tab:stress} and \figref{fig:coverage} report 5.85 points of mean compression, no primary-scenario breach, and an increase from six to eleven observations within 10 points of the threshold. All reported BDC results use the statutory asset-coverage rule; the bank $k=8\%$ formula is not used to characterize BDC capital adequacy.
 
 The empirical first-percentile climate decline is 34.1 percent and produces 3.63 points of compression. The matched first-percentile market decline is 16.8 percent and produces 10.58 points, so the climate-to-market ratio is 0.343. The 2010--2025 window excludes 2008, making this ratio potentially high relative to a longer market-stress history. A 50-percent market scale placebo produces 33.67 points and 82 breaches. These are calibrated comparisons, not estimated structural losses; stars are uninformative because positive beta mechanically maps into positive compression and first-stage DCC uncertainty is not propagated.
 
 \section{Limitations and Conclusion}
 
-The BDC panel is selected on continuous disclosure, industry labels remain coarser than borrower NAICS or emissions, and the 2020 bank path mixes oil, pandemic, funding, and value-rotation shocks. The coverage exercise holds balance sheets and management responses fixed. Three conclusions remain: the bank replication recovers the annual direction, significance, and 85--87 percent of published CRISK magnitudes; estimator-aligned FF49 portfolio beta yields a positive, conventionally 10-percent-significant BDC equity relationship that is not robust to wild-cluster inference; and BDC statutory coverage records measurable but non-breaching capacity erosion. The continuation exercise shows why factor governance matters when a one-year bridge is extended for five years. Code, outputs, and audit instructions are available at \url{https://github.com/MaryMai233/crisk-bdc-replication}.
+The bank replication recovers the annual direction, significance, and 85--87 percent of published CRISK magnitudes. For BDCs, continuous FF49 portfolio beta is more informative than a brown-share proxy, but public filing summaries do not reproduce the precision of loan-level Y-14 data. A broader KOL basket materially improves tracking without resolving that inference gap, separating factor maintenance from exposure identification. The BDC statutory exercise records meaningful but non-breaching buffer erosion. Code, outputs, and audit instructions are available at \url{https://github.com/MaryMai233/crisk-bdc-replication}.
 
 \clearpage
 \begin{thebibliography}{99}
@@ -252,6 +261,12 @@ P\'astor, L., Stambaugh, R. F., and Taylor, L. A. (2022).
 Dissecting green returns.
 \textit{Journal of Financial Economics}, 146(2), 403--424.
 
+\bibitem[VanEck(2020)]{VanEckNPORT2020}
+VanEck ETF Trust. (2020).
+Form N-PORT portfolio schedule for VanEck Vectors Coal ETF, September 30, 2020.
+U.S. Securities and Exchange Commission.
+\url{https://www.sec.gov/Archives/edgar/data/1137360/000175272420245726/NPORT_247470289678245.htm}.
+
 \end{thebibliography}
 
 \clearpage
@@ -262,20 +277,24 @@ Dissecting green returns.
 \caption{Bank Replication of the 2020 Climate-Risk Shock.\label{tab:h1}}
 \begin{threeparttable}
 \begin{minipage}{0.96\textwidth}
-\small This table evaluates the ten-bank replication through 2020. Panel A reports calendar-year mean changes. Panel B compares benchmark magnitudes and peak timing. Panel C verifies the 127-day marginal-CRISK construction. Panel D reports a separate BDC time-series validation.
+\small This table evaluates the ten-bank replication through 2020. Panel A reports climate-beta changes. Panel B compares benchmark magnitudes and peak timing. Panel C verifies the 127-day $m$CRISK construction. Panel D reports a separate BDC time-series validation.
 \end{minipage}
 \vspace{0.10in}
 \scriptsize
+\begin{tabular}{lcc}
+\toprule\toprule
+\multicolumn{3}{l}{\textbf{Panel A: 2020 climate-beta changes}}\\[2pt]
+& Annual paired change & Daily HAC(203) change \\
+Estimate & 0.230*** & 0.230** \\
+& (0.029) & (0.104) \\
+Observations & 10 institutions & 505 trading days \\
+\bottomrule\bottomrule
+\end{tabular}
+
+\vspace{0.10in}
 \resizebox{0.98\textwidth}{!}{%
 \begin{tabular}{lcccc}
 \toprule\toprule
-& Annual beta & Daily beta & Signed CRISK & Positive CRISK \\
-\midrule
-\multicolumn{5}{l}{\textbf{Panel A: 2020 changes}}\\[2pt]
-Estimate & 0.230*** & 0.230** & 343.019*** & 181.394*** \\
-& (0.029) & (0.104) & (81.640) & (42.114) \\
-Observations & 10 & 505 & 505 & 505 \\
-\midrule
 \multicolumn{5}{l}{\textbf{Panel B: Published-magnitude comparison}}\\[2pt]
 & Replicated & Published & Ratio & Qualification \\
 Annual-average peak year & 2021 & 2020 & -- & 2020--2021 plateau \\
@@ -302,7 +321,7 @@ Sample & Mean beta 2019 & Mean beta 2020 & Mean change & Positive changes \\
 \end{tabular}}
 \begin{tablenotes}[flushleft]
 \footnotesize
-\item \textit{Notes:} Panel A's CRISK estimates are differences between daily calendar-year means. Daily diagnostics use HAC(203); lag sensitivity at 21, 63, 126, and 203 days is archived. Because institutions share one factor realization, paired statistics measure cross-institution consistency rather than independent event replications. Panel B's benchmark-aligned change uses December-average beta with year-end debt and market equity. Panel C first applies $m\CRISK=0.92E\times\LRMES$ daily and then averages; mean beta is reference only. The 0.853 $m$CRISK ratio equals 0.972 times 0.877. Panel D is a time-series validation, not the exposure regression. ***, **, and * denote significance at 1, 5, and 10 percent.
+\item \textit{Notes:} The daily diagnostic uses HAC(203); lag sensitivity at 21, 63, 126, and 203 days is archived. Because institutions share one factor realization, the paired statistic measures cross-institution consistency rather than independent event replications. Panel B's benchmark-aligned CRISK change uses December-average beta with year-end debt and market equity. Panel C first applies $m\CRISK=0.92E\times\LRMES$ daily and then averages; mean beta is reference only. Panel D is a time-series validation, not the exposure regression. ***, **, and * denote significance at 1, 5, and 10 percent.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -368,11 +387,19 @@ BDC fixed effects & Yes & Yes & Yes & Yes & Yes & Yes \\
 Quarter fixed effects & Yes & Yes & Yes & Yes & Yes & Yes \\
 Observations & 380 & 380 & 380 & 380 & 380 & 304 \\
 $R^2$ & 0.445 & 0.445 & 0.447 & 0.450 & 0.450 & 0.454 \\
+\midrule
+\multicolumn{7}{l}{\textbf{Panel C: Factor breadth and frequency, firm and quarter fixed effects}}\\[2pt]
+& \multicolumn{2}{c}{Top-five daily} & \multicolumn{2}{c}{Cumulative 75\% daily} & \multicolumn{2}{c}{Cumulative 75\% weekly} \\
+& Equity & Asset & Equity & Asset & Equity & Asset \\
+Portfolio climate beta & 0.152* & 0.153 & 0.184 & 0.169 & 0.173 & 0.155 \\
+& (0.085) & (0.100) & (0.114) & (0.135) & (0.150) & (0.176) \\
+KOL tracking correlation & 0.454 & 0.454 & 0.790 & 0.790 & 0.945 & 0.945 \\
+Observations & 380 & 380 & 380 & 380 & 380 & 380 \\
 \bottomrule\bottomrule
 \end{tabular}}
 \begin{tablenotes}[flushleft]
 \footnotesize
-\item \textit{Notes:} Outcomes and portfolio measures are standardized. FF49 industry returns are value weighted from eligible CRSP U.S. common stocks. Industry and BDC betas use the same median scalar-DCC parameter vector. Standard errors are clustered by BDC and appear in parentheses. High/medium excludes low-confidence mappings. Post-2021 drops the DCC warm-up year. The full-sample equity wild-cluster bootstrap $p$-value is 0.153 with 9,999 draws. ***, **, and * denote two-sided significance at 1, 5, and 10 percent.
+\item \textit{Notes:} Outcomes and portfolio measures are standardized. FF49 industry returns are value weighted from eligible CRSP U.S. common stocks. Industry and BDC betas use the same median scalar-DCC parameter vector. Standard errors are clustered by BDC and appear in parentheses. The full-sample top-five equity wild-cluster $p$-value is 0.153; the cumulative-75-percent daily value is 0.230. The 15-security basket is selected from official N-PORT holdings before observing BDC outcomes. ***, **, and * denote two-sided significance at 1, 5, and 10 percent.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -380,13 +407,13 @@ $R^2$ & 0.445 & 0.445 & 0.447 & 0.450 & 0.450 & 0.454 \\
 \clearpage
 \begin{table}[!h]
 \centering
-\caption{Coarse-Share and Factor-Continuation Diagnostics.\label{tab:factor}}
+\caption{Coarse-Share Robustness and Power Diagnostics.\label{tab:factor}}
 \begin{threeparttable}
 \scriptsize
 \resizebox{0.98\textwidth}{!}{%
 \begin{tabular}{lcccccc}
 \toprule\toprule
-\multicolumn{7}{l}{\textbf{Panel A: Continuation and return frequency}}\\[2pt]
+\multicolumn{7}{l}{\textbf{Panel A: Factor-content and frequency sensitivity}}\\[2pt]
 & \multicolumn{2}{c}{Top-five daily} & \multicolumn{2}{c}{U.S. coal daily} & \multicolumn{2}{c}{Top-five weekly} \\
 & Equity & Asset & Equity & Asset & Equity & Asset \\
 \midrule
@@ -477,7 +504,7 @@ Legal breaches & 0 & 1 & 0 & 0 & \\
 \vspace{0.06in}
 \includegraphics[width=0.95\textwidth]{../01_Bank_CRISK_Replication/Results/Figure_2_Top_Four_Bank_CRISK.png}
 \begin{minipage}{0.93\textwidth}
-\footnotesize\textit{Notes:} The upper panel reports raw daily series; the lower panel reports trailing 127-trading-day means for BAC, C, JPM, and WFC. Signed CRISK retains capital surpluses; positive CRISK truncates negative institution values at zero. Vertical markers identify the 9 March oil-price break, the 16 March COVID market dislocation, and the 9 November Pfizer--BioNTech announcement. Smoothing is shown separately so it cannot obscure event timing.
+\footnotesize\textit{Notes:} The upper panel reports raw daily $m$CRISK and aggregate CRISK; the lower panel reports trailing 127-trading-day means for BAC, C, JPM, and WFC. Aggregate CRISK sums positive institution-level shortfalls. Vertical markers identify the 9 March oil-price break, the 16 March COVID market dislocation, and the 9 November Pfizer--BioNTech announcement.
 \end{minipage}
 \end{figure}
 
@@ -495,11 +522,11 @@ Legal breaches & 0 & 1 & 0 & 0 & \\
 \clearpage
 \begin{figure}[!h]
 \centering
-\caption{Exposure Sensitivity to Factor Construction.\label{fig:factorsensitivity}}
+\caption{KOL Basket Breadth and the BDC Portfolio Mechanism.\label{fig:factorsensitivity}}
 \vspace{0.06in}
-\includegraphics[width=0.95\textwidth]{../02_BDC_Investment_Exposure_and_Climate_Beta/Results/Figure_5_Factor_Continuation_Sensitivity.png}
+\includegraphics[width=0.95\textwidth]{../02_BDC_Investment_Exposure_and_Climate_Beta/Results/Figure_5_KOL_Basket_Breadth_and_BDC_Mechanism.png}
 \begin{minipage}{0.93\textwidth}
-\footnotesize\textit{Notes:} The left panel reports standardized broad-share coefficients and 95-percent confidence intervals; dashed lines mark the pooled 80-percent MDE. The right panel links tracking correlation to the coefficient. The connected top-five points hold basket content fixed and change frequency; the U.S. coal point also changes economic content. The correlation-one extrapolation is descriptive. No estimate is statistically significant.
+\footnotesize\textit{Notes:} Panel A compares pre-liquidation KOL tracking for the published top-five continuation and the pre-specified 15-security basket that covers 77.1 percent of the official September 2020 N-PORT schedule. Panel B reports firm- and quarter-fixed-effects DCC--FF49 portfolio coefficients with 90-percent confidence intervals. The top-five daily equity estimate is conventionally significant at 10 percent; neither cumulative-75-percent estimate is. The same 15-security basket is used in its daily and weekly columns.
 \end{minipage}
 \end{figure}
 
@@ -523,6 +550,44 @@ Legal breaches & 0 & 1 & 0 & 0 & \\
 \renewcommand{\thefigure}{A\arabic{figure}}
 \setcounter{figure}{0}
 \section*{Appendix: Supporting Diagnostics}
+
+\begin{table}[!h]
+\centering
+\caption{Published Y-14 Portfolio Validation and Robustness.
+\label{tab:y14compare}}
+\begin{threeparttable}
+\scriptsize
+\begin{tabular}{lcccc}
+\toprule\toprule
+& (1) & (2) & (3) & (4) \\
+\midrule
+\multicolumn{5}{l}{\textbf{Panel A: Published Table 1 and Appendix F}}\\[2pt]
+Main committed-exposure beta & 1.718*** & 1.524*** & 1.400*** & 1.112*** \\
+& (5.67) & (5.80) & (6.37) & (3.58) \\
+Unlevered industry beta & 2.817*** & 1.997*** & 2.347*** & 1.866*** \\
+& (3.50) & (3.04) & (5.10) & (3.29) \\
+Utilized-exposure beta & 1.588*** & 1.361*** & 1.089*** & 0.715*** \\
+& (6.64) & (6.14) & (5.31) & (3.02) \\
+Listed-borrower matched beta & 0.752*** & 0.624*** & 0.649*** & 0.528*** \\
+& (3.97) & (4.04) & (6.57) & (5.83) \\
+Observations & 664--666 & 664--666 & 664--666 & 664--666 \\
+\midrule
+\multicolumn{5}{l}{\textbf{Panel B: Published actual-weight and shuffled-weight placebo}}\\[2pt]
+Actual portfolio beta & 1.680*** & 1.351*** & 0.988*** & 0.949** \\
+& (5.66) & (6.30) & (5.28) & (2.81) \\
+Shuffled portfolio beta & 1.078 & 0.143 & -0.513 & 0.523 \\
+& (1.61) & (0.29) & (-1.84) & (1.31) \\
+Observations & 339 & 339 & 339 & 339 \\
+\bottomrule\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]
+\footnotesize
+\item \textit{Notes:} Coefficients and $t$-statistics are transcribed from Jung, Engle, and Berner (2025), Table 1, Tables F.1--F.3, and Table IA.E.1. Columns progressively add bank controls, bank fixed effects, and year fixed effects. Every robustness in Panel A preserves continuous borrower-industry or matched-borrower climate beta; none replaces it with a binary brown-loan share. ***, **, and * denote significance at 1, 5, and 10 percent.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\clearpage
 
 \begin{figure}[!h]
 \centering
