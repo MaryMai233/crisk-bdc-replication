@@ -1,5 +1,18 @@
 # Changelog
 
+## v4.1.0 — 2026-08-25
+
+- Moved every paper table number and title above the table in both LaTeX/PDF and Word; table notes remain below.
+- Added an explicit factor-scope disclosure: the original paper constructs four climate transition factors (stranded asset, emission, BMG, and CEP), while this archive currently implements the stranded-asset factor only.
+- Kept the published top-five KOL continuation as the strict baseline and the cumulative-75-percent KOL basket as a breadth robustness, not as a second climate factor.
+- Rebuilt the paper locally and synchronized the v4.1 scope/format documentation to the public repository; the source build files in this package reproduce the updated PDF and Word outputs.
+
+## v3.0.0 — 2026-08-25
+
+- Added the cumulative-75-percent KOL continuation robustness based on the September 2020 N-PORT holdings.
+- Removed the non-original “signed CRISK” terminology from user-facing outputs and retained CRISK and mCRISK.
+- Expanded inference and factor-continuation diagnostics for the BDC extension.
+
 ## v2.7.0 — 2026-08-20
 
 - Validated six annual all-U.S. CRSP daily extracts and added the licensed-data checksum manifest.
