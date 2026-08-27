@@ -1,6 +1,6 @@
 # Climate Risk and Business Development Companies
 
-## Replication Archive, Version 4.1
+## Replication Archive, Version 4.2
 
 This archive accompanies *Climate Risk and Business Development Companies: Replication, Factor Maintenance, and Regulatory Capacity*. It contains one paper and three empirical modules. Every module uses the same `Code` / `Data` / `Results` structure and includes both Python and Stata code.
 
@@ -53,9 +53,9 @@ Python dependencies appear in each module's `Code/requirements.txt`. The DCC and
 
 After reproducing the modules, run `python validate_release.py` from the archive root. It checks the daily marginal-CRISK identity, the book-to-market reciprocal identity, the BDC paired validation, all 49 industry volatility fits, FF49 coverage, equality of repeated estimates, the conventional and wild-cluster inference records, weekly convergence, and all required outputs.
 
-## Principal additions in Version 4.1
+## Principal additions in Version 4.2
 
-1. All paper tables use sparse academic formatting with coefficients followed by t statistics in parentheses and no dense multi-panel mega-table. **Every table number/title is placed above the table, with notes below.** `TABLE_CROSSWALK.md` states which BDC table is a direct analogue of each original table and where no valid analogue exists.
+1. All paper tables use sparse academic formatting with coefficients followed by t statistics in parentheses and no dense multi-panel mega-table. **Every table number/title is placed above the table, with notes below, and every main table/figure is embedded in the relevant narrative section near its first substantive discussion rather than collected in an end-of-paper display section.** Long Word tables may begin on a fresh page to avoid splitting, but they remain inside the corresponding section. `TABLE_CROSSWALK.md` states which BDC table is a direct analogue of each original table and where no valid analogue exists.
 2. The BDC main regression now has a literal four-column analogue of the original Table 1: exposure only; + controls; + BDC fixed effects; + year fixed effects. The portfolio-beta coefficients are 0.223*, 0.126, 0.421***, and 0.694***.
 3. A deliberately stricter specification adds financial controls together with BDC and quarter fixed effects. The top-five equity coefficient is 0.402** (t=2.34; conventional p=0.019), with wild-cluster p=0.092. This is reported separately from the direct published-specification analogue rather than mixing the two designs in one table.
 4. The published top-five KOL continuation remains the strict replication. A pre-specified 15-security basket covering 77.1% of the official 30 September 2020 N-PORT common-stock schedule remains a breadth robustness. It raises daily KOL tracking from 0.454 to 0.790, but the stricter equity wild-cluster p-value moves from 0.092 to 0.162.
