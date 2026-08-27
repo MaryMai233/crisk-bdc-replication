@@ -2,7 +2,7 @@
 
 This release deliberately mirrors the original paper's table logic rather than combining unrelated robustness checks into dense multi-panel tables.
 
-**v4.1 formatting rule:** every table number/title is placed **above** the table; table notes remain below.
+**v4.2 formatting rule:** every table number/title is placed **above** the table; table notes remain below; and every main table/figure is embedded in the relevant narrative section near its first substantive discussion rather than collected at the end.
 
 **Climate-factor scope:** the original paper constructs four climate transition factors---Stranded Asset, Emission, Brown Minus Green (BMG), and CEP. This archive currently implements **one climate factor, the Stranded Asset factor**, as the replication baseline. The top-five and cumulative-75% KOL baskets are two continuation rules for that same factor, not two different climate factors. FF12/FF49/brown-share variables are exposure mappings, and HYG/JNK-minus-SHY is a control-factor robustness, not an additional climate factor.
 
