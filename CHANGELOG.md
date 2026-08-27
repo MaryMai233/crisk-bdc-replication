@@ -1,5 +1,13 @@
 # Changelog
 
+## v4.2.0 — 2026-08-27
+
+- Moved all main tables and figures into the narrative at the point where each result is first discussed instead of collecting displays at the end of the paper.
+- Kept every table/figure number and title above the display and notes below.
+- Added short bridge sentences around displays so the paper reads continuously; appendix diagnostics are also interleaved with their explanatory text.
+- In the Word version, long tables may start on a new page to avoid row splitting, but they remain within their substantive section rather than a separate tables/figures section.
+- Rebuilt and visually inspected both PDF and Word outputs after the layout change.
+
 ## v4.1.0 — 2026-08-25
 
 - Moved every paper table number and title above the table in both LaTeX/PDF and Word; table notes remain below.
