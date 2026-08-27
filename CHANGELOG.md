@@ -1,5 +1,13 @@
 # Changelog
 
+## v4.3.0 — 2026-08-27
+
+- Cut the paper from the longer v4.2 layout to a compact core draft.
+- Reduced the paper to 3 tables and 2 figures; deleted descriptive, asset-beta, KOL-detail, appendix Y-14/placebo, and supplementary diagnostic displays from the paper while retaining their result files in the archive.
+- Shortened the main text to only the key replication, BDC portfolio-channel, measurement-resolution, and statutory-capacity results.
+- Kept table/figure titles above each display and kept all retained displays inline with the narrative.
+- Rebuilt and visually checked both the PDF and Word versions; the release validator passes.
+
 ## v4.2.0 — 2026-08-27
 
 - Moved all main tables and figures into the narrative at the point where each result is first discussed instead of collecting displays at the end of the paper.
