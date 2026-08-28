@@ -1,5 +1,13 @@
 # Changelog
 
+## v4.4.0 — 2026-08-27
+
+- Rebalanced the paper to four tables and three figures.
+- Removed the separate Abstract section and folded the summary into the Introduction.
+- Shortened the main text so it states descriptive conclusions instead of repeating detailed coefficients, stars, and p-values already shown in the tables.
+- Restored one compact KOL continuation table and figure because factor-maintenance robustness is central to the extension.
+- Removed appendix-style displays from the paper; detailed diagnostics remain in the replication modules.
+
 ## v4.3.0 — 2026-08-27
 
 - Cut the paper from the longer v4.2 layout to a compact core draft.
